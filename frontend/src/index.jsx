@@ -3,6 +3,7 @@ import { render } from 'solid-js/web';
 
 import './index.css';
 import App from './App';
+import RootLayout from './pages/RootLayout';
 
 const root = document.getElementById('root');
 
