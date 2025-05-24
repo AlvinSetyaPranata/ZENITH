@@ -1,8 +1,6 @@
 package master
 
 import (
-	"fmt"
-
 	"github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	services "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/master"
 	"github.com/gofiber/fiber/v2"
@@ -34,8 +32,8 @@ func (p *CityPresenter) CreateCityData(ctx *fiber.Ctx) (int, *master.CityModelRe
 
 	data, status, messege := p.Service.AddCity(ctx.UserContext(), request)
 
-	if status != 201 || data == nil {
-		return status, nil, fmt.Sprintf("Error just occured: %s", messege)
+	if status != 201 {
+		return status, nil, messege
 	}
 
 	// Response creation
@@ -64,5 +62,62 @@ func (p *CityPresenter) GetCitiesData(ctx *fiber.Ctx) (int, *[]master.CityModelR
 	}
 
 	return status, &response, messege
+
+}
+
+func (p *CityPresenter) GetCityDataById(ctx *fiber.Ctx, id string) (int, *master.CityModelResponse, string) {
+
+	city, status, messege := p.Service.GetCityById(ctx.UserContext(), id)
+
+	if status != 200 {
+		return status, nil, messege
+	}
+
+	response := &master.CityModelResponse{
+		Name:        city.Name,
+		DateCreated: city.DateCreated,
+	}
+
+	return status, response, messege
+
+}
+
+func (p *CityPresenter) UpdateCityData(ctx *fiber.Ctx, id string) (int, *master.CityModelResponse, string) {
+
+	request := new(master.CityModelRequest)
+
+	if err := ctx.BodyParser(request); err != nil {
+		return 400, nil, "Invalid request"
+	}
+
+	city, status, messege := p.Service.UpdateCityData(ctx.UserContext(), request, id)
+
+	if status != 200 {
+		return status, nil, messege
+	}
+
+	response := &master.CityModelResponse{
+		Name:        city.Name,
+		DateCreated: city.DateCreated,
+	}
+
+	return status, response, messege
+
+}
+
+func (p *CityPresenter) DeleteCity(ctx *fiber.Ctx, id string) (int, *master.CityModelResponse, string) {
+
+	city, status, messege := p.Service.DeleteCityData(ctx.UserContext(), id)
+
+	if status != 200 {
+		return status, nil, messege
+	}
+
+	response := &master.CityModelResponse{
+		Name:        city.Name,
+		DateCreated: city.DateCreated,
+	}
+
+	return status, response, messege
 
 }

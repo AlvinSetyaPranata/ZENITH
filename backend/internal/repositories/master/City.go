@@ -54,7 +54,7 @@ func (r *CityRepository) Create(ctx context.Context, data master.CityModelReques
 	return cityEntity, nil
 }
 
-func (r *CityRepository) GetAll(ctx context.Context, entity *[]entities.City) error {
+func (r *CityRepository) GetAll(ctx context.Context, entities *[]entities.City) error {
 	tx := r.DB.WithContext(ctx).Begin()
 	success := false
 
@@ -66,5 +66,51 @@ func (r *CityRepository) GetAll(ctx context.Context, entity *[]entities.City) er
 
 	success = true
 
-	return r.DB.Find(entity).Error
+	return r.DB.Find(entities).Error
+}
+
+func (r *CityRepository) GetById(ctx context.Context, entity *entities.City, id string) error {
+	tx := r.DB.WithContext(ctx).Begin()
+	success := true
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	success = true
+	return r.DB.Where("id = ?", id).Take(entity).Error
+
+}
+
+func (r *CityRepository) Update(ctx context.Context, updatedEntity *entities.City) error {
+	tx := r.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	success = true
+
+	return r.DB.Save(updatedEntity).Error
+
+}
+
+func (r *CityRepository) Delete(ctx context.Context, entityToDelete *entities.City) error {
+	tx := r.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	success = true
+
+	return r.DB.Delete(entityToDelete).Error
 }

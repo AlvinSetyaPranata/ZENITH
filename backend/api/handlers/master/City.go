@@ -41,3 +41,42 @@ func (h *CityHandler) Create(ctx *fiber.Ctx) error {
 	})
 
 }
+
+func (h *CityHandler) GetById(ctx *fiber.Ctx) error {
+
+	// Extract id params
+	id := ctx.Params("id", "")
+
+	status, data, messege := h.Presenter.GetCityDataById(ctx, id)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
+	})
+}
+
+func (h *CityHandler) Update(ctx *fiber.Ctx) error {
+
+	// Extract id params
+	id := ctx.Params("id", "")
+
+	status, data, messege := h.Presenter.UpdateCityData(ctx, id)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
+	})
+}
+
+func (h *CityHandler) Delete(ctx *fiber.Ctx) error {
+
+	// Extract id params
+	id := ctx.Params("id", "")
+
+	status, data, messege := h.Presenter.DeleteCity(ctx, id)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
+	})
+}
