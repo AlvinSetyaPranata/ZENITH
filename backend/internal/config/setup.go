@@ -2,7 +2,11 @@ package config
 
 import (
 	handlers "github.com/AlvinSetyaPranata/ZENITH/backend/api/handlers/master"
+	presenters "github.com/AlvinSetyaPranata/ZENITH/backend/api/presenters/master"
 	"github.com/AlvinSetyaPranata/ZENITH/backend/api/routes"
+	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
+	repositories "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/master"
+	services "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/master"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 
@@ -15,15 +19,61 @@ type BoostrapConfig struct {
 	Log *zap.SugaredLogger
 }
 
-func Boostrap(config *BoostrapConfig) {
-	cityHandler := &handlers.CityHandler{}
+func BoostrapRoute(config *BoostrapConfig) {
 
-	config.Log.Debug("Setting up routers")
+	// Repositories
+	config.Log.Debug("Boostraping all repositories")
+	cityRepository := repositories.NewCityRepository(config.DB, config.Log)
+
+	// Services
+	config.Log.Debug("Boostraping all repositories")
+
+	cityService := services.NewCityService(cityRepository, config.Log)
+
+	// Presenters
+
+	config.Log.Debug("Boostraping all presenters")
+	cityPresenter := presenters.NewCityPresenter(cityService, config.Log)
+
+	// Handlers
+	config.Log.Debug("Boostraping all handlers")
+	cityHandler := handlers.NewCityHandler(cityPresenter, config.Log)
+
+	config.Log.Debug("So far, no problem, good!")
+
 	route := routes.RouteConfig{
 		App:         config.App,
 		CityHandler: cityHandler,
 	}
 
+	config.Log.Debug("Configuring routers")
 	route.SetupRoute()
+	config.Log.Debug("Routers has been configured succesfully!")
+}
+
+func Migrate(config *BoostrapConfig) bool {
+
+	config.Log.Debug("Migrating schema to database")
+
+	cityEntity := &entities.City{}
+
+	err := config.DB.AutoMigrate(cityEntity)
+
+	if err != nil {
+		config.Log.Panicf("Error occured during migrating schema: %s", err)
+		return false
+	}
+
+	config.Log.Debug("Schema migrated succesfully!")
+
+	return true
+
+}
+
+func Boostrap(config *BoostrapConfig) bool {
+	BoostrapRoute(config)
+	migration_status := Migrate(config)
+
+	return migration_status
 
 }

@@ -6,28 +6,31 @@ import (
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
 	model "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	repositories "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/master"
+	"go.uber.org/zap"
 )
 
 type CityService struct {
 	CityRepository *repositories.CityRepository
+	Log            *zap.SugaredLogger
 }
 
-func NewCityService(cityRepository repositories.CityRepository) *CityService {
+func NewCityService(cityRepository *repositories.CityRepository, log *zap.SugaredLogger) *CityService {
 	return &CityService{
-		CityRepository: &cityRepository,
+		CityRepository: cityRepository,
+		Log:            log,
 	}
 }
 
 // business logic
 
-func (service *CityService) AddCity(ctx context.Context, cityRequest *model.CityModelRequest) (*model.CityModelResponse, int, string) {
-	isCreated := service.CityRepository.Create(ctx, *cityRequest)
+func (service *CityService) AddCity(ctx context.Context, cityRequest *model.CityModelRequest) (*entities.City, int, string) {
+	data, err := service.CityRepository.Create(ctx, *cityRequest)
 
-	if !isCreated {
+	if err != nil {
 		return nil, 500, "Server Error"
 	}
 
-	return nil, 200, "New city data added"
+	return data, 201, "New city data added"
 
 }
 

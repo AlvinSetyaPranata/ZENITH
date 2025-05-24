@@ -11,6 +11,6 @@ type RouteConfig struct {
 }
 
 func (r *RouteConfig) SetupRoute() {
-	// r.App.Post("/api/city", r.CityHandler.Create)
+	r.App.Post("/api/city", r.CityHandler.Create)
 	r.App.Get("/api/cities", r.CityHandler.Get)
 }
