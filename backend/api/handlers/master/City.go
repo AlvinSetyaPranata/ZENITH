@@ -22,23 +22,12 @@ func NewCityHandler(presenter *master.CityPresenter, log *zap.SugaredLogger) *Ci
 
 func (h *CityHandler) Get(ctx *fiber.Ctx) error {
 
-	return ctx.Status(200).JSON(fiber.Map{
-		"messege": "It works!",
+	status, data, messege := h.Presenter.GetCitiesData(ctx)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
 	})
-
-	// request := new(model.CityModelRequest)
-
-	// if err := ctx.BodyParser(request); err != nil {
-	// 	return ctx.Status(400).JSON(fiber.Map{
-	// 		"messege": err.Error(),
-	// 	})
-	// }
-
-	// _, status, messege := h.Service.AddCity(ctx.UserContext(), request)
-
-	// return ctx.Status(status).JSON(fiber.Map{
-	// 	"messege": messege,
-	// })
 
 }
 

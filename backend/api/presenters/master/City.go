@@ -46,3 +46,23 @@ func (p *CityPresenter) CreateCityData(ctx *fiber.Ctx) (int, *master.CityModelRe
 
 	return status, response, messege
 }
+
+func (p *CityPresenter) GetCitiesData(ctx *fiber.Ctx) (int, *[]master.CityModelResponse, string) {
+	entities, status, messege := p.Service.GetAllCities(ctx.UserContext())
+
+	if status != 200 {
+		return status, nil, messege
+	}
+
+	response := make([]master.CityModelResponse, 0, len(*entities))
+
+	for _, city := range *entities {
+		response = append(response, master.CityModelResponse{
+			Name:        city.Name,
+			DateCreated: city.DateCreated,
+		})
+	}
+
+	return status, &response, messege
+
+}

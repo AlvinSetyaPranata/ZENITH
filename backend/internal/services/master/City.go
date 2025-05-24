@@ -34,14 +34,14 @@ func (service *CityService) AddCity(ctx context.Context, cityRequest *model.City
 
 }
 
-func (service *CityService) GetAllCities(ctx context.Context) *[]entities.City {
+func (service *CityService) GetAllCities(ctx context.Context) (*[]entities.City, int, string) {
 
 	cities := new([]entities.City)
 
 	if err := service.CityRepository.GetAll(ctx, cities); err != nil {
-		return nil
+		return nil, 500, err.Error()
 	}
 
-	return cities
+	return cities, 200, "Data of all city"
 
 }

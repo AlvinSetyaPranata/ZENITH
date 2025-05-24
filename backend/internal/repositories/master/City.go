@@ -29,7 +29,7 @@ func NewCityRepository(db *gorm.DB, log *zap.SugaredLogger) *CityRepository {
 
 func (r *CityRepository) Create(ctx context.Context, data master.CityModelRequest) (*entities.City, error) {
 	tx := r.DB.WithContext(ctx).Begin()
-	success := true
+	success := false
 
 	defer func() {
 		if !success {
@@ -55,9 +55,16 @@ func (r *CityRepository) Create(ctx context.Context, data master.CityModelReques
 }
 
 func (r *CityRepository) GetAll(ctx context.Context, entity *[]entities.City) error {
-	tx := r.DB.WithContext(ctx)
+	tx := r.DB.WithContext(ctx).Begin()
+	success := false
 
-	defer tx.Rollback()
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	success = true
 
 	return r.DB.Find(entity).Error
 }
