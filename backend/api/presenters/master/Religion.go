@@ -21,7 +21,7 @@ func NewReligionPresenter(religionService *services.ReligionService, log *zap.Su
 
 // Core Presenter
 
-func (presenter ReligionPresenter) CreateNewReligionData(ctx *fiber.Ctx) (*model.ReligionyModelResponse, int, string) {
+func (presenter *ReligionPresenter) CreateNewReligionData(ctx *fiber.Ctx) (*model.ReligionModelResponse, int, string) {
 
 	religionRequest := new(model.ReligionyModelRequest)
 
@@ -31,11 +31,82 @@ func (presenter ReligionPresenter) CreateNewReligionData(ctx *fiber.Ctx) (*model
 		return nil, status, messege
 	}
 
-	response := &model.ReligionyModelResponse{
+	response := &model.ReligionModelResponse{
 		Name:        religionEntity.Name,
 		DateCreated: religionEntity.DateCreated,
 	}
 
 	return response, status, messege
 
+}
+
+func (presenter *ReligionPresenter) GetAllReligionData(ctx *fiber.Ctx) (*[]model.ReligionModelResponse, int, string) {
+
+	religionsEntity, status, messege := presenter.ReligionService.GetAllReligionData(ctx)
+
+	if status != 200 {
+		return nil, status, messege
+	}
+
+	response := make([]model.ReligionModelResponse, 0, len(*religionsEntity))
+
+	for _, city := range *religionsEntity {
+		response = append(response, model.ReligionModelResponse{
+			Name:        city.Name,
+			DateCreated: city.DateCreated,
+		})
+	}
+
+	return &response, 200, "Religions data"
+
+}
+
+func (presenter *ReligionPresenter) GetReligionDataByID(ctx *fiber.Ctx) (*model.ReligionModelResponse, int, string) {
+
+	religionEntity, status, messege := presenter.ReligionService.GetReligionByID(ctx)
+
+	if status != 200 {
+		return nil, status, messege
+	}
+
+	response := &model.ReligionModelResponse{
+		Name:        religionEntity.Name,
+		DateCreated: religionEntity.DateCreated,
+	}
+
+	return response, 200, "Religion data with given ID"
+
+}
+
+func (presenter *ReligionPresenter) UpdateReligionData(ctx *fiber.Ctx) (*model.ReligionModelResponse, int, string) {
+
+	religionEntity, status, messege := presenter.ReligionService.Update(ctx)
+
+	if status != 200 {
+		return nil, status, messege
+	}
+
+	response := &model.ReligionModelResponse{
+		Name:        religionEntity.Name,
+		DateCreated: religionEntity.DateCreated,
+	}
+
+	return response, 200, "Religion with given id, has been updated successfully!"
+
+}
+
+func (presenter *ReligionPresenter) DeleteReligionData(ctx *fiber.Ctx) (*model.ReligionModelResponse, int, string) {
+
+	religionEntity, status, messege := presenter.ReligionService.Delete(ctx)
+
+	if status != 200 {
+		return nil, status, messege
+	}
+
+	response := &model.ReligionModelResponse{
+		Name:        religionEntity.Name,
+		DateCreated: religionEntity.DateCreated,
+	}
+
+	return response, 200, "Religion with given id, has been deleted successfully!"
 }

@@ -6,7 +6,7 @@ type ReligionyModelRequest struct {
 	Name string `json:"name" validate:"true"`
 }
 
-type ReligionyModelResponse struct {
+type ReligionModelResponse struct {
 	Name        string    `json:"name" validate:"true"`
 	DateCreated time.Time `json:"date_created" validate:"true"`
 }

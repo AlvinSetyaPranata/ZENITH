@@ -29,3 +29,39 @@ func (handler *ReligionHandler) Create(ctx *fiber.Ctx) error {
 	})
 
 }
+
+func (handler *ReligionHandler) GetAll(ctx *fiber.Ctx) error {
+	data, status, messsege := handler.ReligionPresenter.GetAllReligionData(ctx)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messsege,
+		"data":    data,
+	})
+}
+
+func (handler *ReligionHandler) GetByID(ctx *fiber.Ctx) error {
+	data, status, messege := handler.ReligionPresenter.GetReligionDataByID(ctx)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
+	})
+}
+
+func (handler *ReligionHandler) Update(ctx *fiber.Ctx) error {
+	data, status, messege := handler.ReligionPresenter.UpdateReligionData(ctx)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
+	})
+}
+
+func (handler *ReligionHandler) Delete(ctx *fiber.Ctx) error {
+	data, status, messege := handler.ReligionPresenter.DeleteReligionData(ctx)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    data,
+	})
+}

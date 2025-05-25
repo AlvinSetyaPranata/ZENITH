@@ -41,3 +41,71 @@ func (service *ReligionService) CreateReligionData(ctx *fiber.Ctx, religionReque
 
 	return religionEntity, 201, "New Religion data is successfully created!"
 }
+
+func (service *ReligionService) GetAllReligionData(ctx *fiber.Ctx) (*[]entities.Religion, int, string) {
+
+	religionEntities := new([]entities.Religion)
+
+	if err := service.ReligionRepository.GetAll(ctx.UserContext(), religionEntities); err != nil {
+		return nil, 500, err.Error()
+	}
+
+	return religionEntities, 200, "Religions Data"
+
+}
+
+func (service *ReligionService) GetReligionByID(ctx *fiber.Ctx) (*entities.Religion, int, string) {
+
+	id := ctx.Params("id", "")
+
+	if id == "" {
+		return nil, 400, "Invalid Request!"
+	}
+
+	religionEntity := new(entities.Religion)
+
+	if err := service.ReligionRepository.GetByID(ctx.UserContext(), religionEntity, id); err != nil {
+		return nil, 500, err.Error()
+	}
+
+	return religionEntity, 200, "Religion data by ID"
+
+}
+
+func (service *ReligionService) Update(ctx *fiber.Ctx) (*entities.Religion, int, string) {
+
+	id := ctx.Params("id", "")
+
+	if id == "" {
+		return nil, 400, "Invalid Request!"
+	}
+
+	newReligionData := new(entities.Religion)
+	updatedReligionData := new(entities.Religion)
+
+	if err := ctx.BodyParser(newReligionData); err != nil {
+		return nil, 400, "Invalid Request"
+	}
+
+	if err := service.ReligionRepository.Update(ctx.UserContext(), newReligionData, updatedReligionData, id); err != nil {
+		return nil, 500, err.Error()
+	}
+
+	return updatedReligionData, 200, "Religion data with given id, has been updated successfully!"
+
+}
+
+func (service *ReligionService) Delete(ctx *fiber.Ctx) (*entities.Religion, int, string) {
+	id := ctx.Params("id", "")
+	deletedEntity := new(entities.Religion)
+
+	if id == "" {
+		return nil, 400, "Invalid Request!"
+	}
+
+	if err := service.ReligionRepository.Delete(ctx.UserContext(), deletedEntity, id); err != nil {
+		return nil, 500, err.Error()
+	}
+
+	return deletedEntity, 200, "Religion data with given id, has been deleted successfully"
+}
