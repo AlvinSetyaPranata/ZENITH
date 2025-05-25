@@ -2,10 +2,8 @@ package master
 
 import (
 	"context"
-	"time"
 
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
-	"github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	"github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -27,8 +25,8 @@ func NewCityRepository(db *gorm.DB, log *zap.SugaredLogger) *CityRepository {
 
 // Repositories
 
-func (r *CityRepository) Create(ctx context.Context, data master.CityModelRequest) (*entities.City, error) {
-	tx := r.DB.WithContext(ctx).Begin()
+func (repository *CityRepository) Create(ctx context.Context, data *entities.City) error {
+	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
 
 	defer func() {
@@ -37,25 +35,20 @@ func (r *CityRepository) Create(ctx context.Context, data master.CityModelReques
 		}
 	}()
 
-	cityEntity := &entities.City{
-		Name:        data.Name,
-		DateCreated: time.Now(),
-	}
-
-	if err := tx.Create(cityEntity).Error; err != nil {
-		return nil, err
+	if err := repository.DB.Create(&data).Error; err != nil {
+		return err
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		return nil, err
+		return err
 	}
 
 	success = true
-	return cityEntity, nil
+	return nil
 }
 
-func (r *CityRepository) GetAll(ctx context.Context, entities *[]entities.City) error {
-	tx := r.DB.WithContext(ctx).Begin()
+func (repository *CityRepository) GetAll(ctx context.Context, entities *[]entities.City) error {
+	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
 
 	defer func() {
@@ -64,13 +57,16 @@ func (r *CityRepository) GetAll(ctx context.Context, entities *[]entities.City) 
 		}
 	}()
 
-	success = true
+	if err := repository.DB.Find(entities).Error; err != nil {
+		return err
+	}
 
-	return r.DB.Find(entities).Error
+	success = true
+	return nil
 }
 
-func (r *CityRepository) GetById(ctx context.Context, entity *entities.City, id string) error {
-	tx := r.DB.WithContext(ctx).Begin()
+func (repository *CityRepository) GetById(ctx context.Context, entity *entities.City, id string) error {
+	tx := repository.DB.WithContext(ctx).Begin()
 	success := true
 
 	defer func() {
@@ -79,13 +75,17 @@ func (r *CityRepository) GetById(ctx context.Context, entity *entities.City, id 
 		}
 	}()
 
+	if err := repository.DB.Where("id = ?", id).Take(entity).Error; err != nil {
+		return err
+	}
+
 	success = true
-	return r.DB.Where("id = ?", id).Take(entity).Error
+	return nil
 
 }
 
-func (r *CityRepository) Update(ctx context.Context, updatedEntity *entities.City) error {
-	tx := r.DB.WithContext(ctx).Begin()
+func (repository *CityRepository) Update(ctx context.Context, updatedEntity *entities.City, id string) error {
+	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
 
 	defer func() {
@@ -94,14 +94,21 @@ func (r *CityRepository) Update(ctx context.Context, updatedEntity *entities.Cit
 		}
 	}()
 
-	success = true
+	if err := repository.DB.Where("id = ?", id).Updates(updatedEntity).Error; err != nil {
+		return err
+	}
 
-	return r.DB.Save(updatedEntity).Error
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
+	success = true
+	return nil
 
 }
 
-func (r *CityRepository) Delete(ctx context.Context, entityToDelete *entities.City) error {
-	tx := r.DB.WithContext(ctx).Begin()
+func (repository *CityRepository) Delete(ctx context.Context, entityToDelete *entities.City, id string) error {
+	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
 
 	defer func() {
@@ -110,7 +117,15 @@ func (r *CityRepository) Delete(ctx context.Context, entityToDelete *entities.Ci
 		}
 	}()
 
+	if err := repository.DB.Where("id = ?", id).Delete(entityToDelete); err != nil {
+		return err.Error
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err.Error
+	}
+
 	success = true
 
-	return r.DB.Delete(entityToDelete).Error
+	return nil
 }

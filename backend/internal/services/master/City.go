@@ -3,10 +3,13 @@ package master
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
 	model "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	repositories "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/master"
+	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -25,10 +28,18 @@ func NewCityService(cityRepository *repositories.CityRepository, log *zap.Sugare
 
 // business logic
 
-func (service *CityService) AddCity(ctx context.Context, cityRequest *model.CityModelRequest) (*entities.City, int, string) {
-	data, err := service.CityRepository.Create(ctx, *cityRequest)
+func (service *CityService) AddCity(ctx *fiber.Ctx, cityRequest *model.CityModelRequest) (*entities.City, int, string) {
 
-	if err != nil {
+	if err := ctx.BodyParser(cityRequest); err != nil {
+		return nil, 400, "Invalid Request"
+	}
+
+	data := &entities.City{
+		Name:        cityRequest.Name,
+		DateCreated: time.Now(),
+	}
+
+	if err := service.CityRepository.Create(ctx.UserContext(), data); err != nil {
 		return nil, 500, "Server Error"
 	}
 
@@ -58,22 +69,28 @@ func (service *CityService) GetCityById(ctx context.Context, id string) (*entiti
 	return city, 200, "City data with given id"
 }
 
-func (service *CityService) UpdateCityData(ctx context.Context, newData *model.CityModelRequest, id string) (*entities.City, int, string) {
+func (service *CityService) UpdateCityData(ctx *fiber.Ctx, cityModelRequest *model.CityModelRequest, id string) (*entities.City, int, string) {
+
+	if err := ctx.BodyParser(cityModelRequest); err != nil {
+		return nil, 400, "Invalid request"
+	}
 
 	city := new(entities.City)
 
 	// Get entity
-	if err := service.CityRepository.GetById(ctx, city, id); errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := service.CityRepository.GetById(ctx.UserContext(), city, id); errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, 404, "City with given id, is not found!"
 	}
 
+	fmt.Println(city.Id)
+
 	updatedCity := &entities.City{
 		Id:          city.Id,
-		Name:        newData.Name,
+		Name:        cityModelRequest.Name,
 		DateCreated: city.DateCreated,
 	}
 
-	if err := service.CityRepository.Update(ctx, updatedCity); err != nil {
+	if err := service.CityRepository.Update(ctx.UserContext(), updatedCity, id); err != nil {
 		return nil, 500, err.Error()
 	}
 
@@ -81,16 +98,16 @@ func (service *CityService) UpdateCityData(ctx context.Context, newData *model.C
 
 }
 
-func (service *CityService) DeleteCityData(ctx context.Context, id string) (*entities.City, int, string) {
+func (service *CityService) DeleteCityData(ctx *fiber.Ctx, id string) (*entities.City, int, string) {
 
 	city := new(entities.City)
 
 	// Get city data
-	if err := service.CityRepository.GetById(ctx, city, id); errors.Is(err, gorm.ErrRecordNotFound) {
+	if err := service.CityRepository.GetById(ctx.UserContext(), city, id); errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, 404, "City with given id, is not found!"
 	}
 
-	if err := service.CityRepository.Delete(ctx, city); err != nil {
+	if err := service.CityRepository.Delete(ctx.UserContext(), city, id); err != nil {
 		return nil, 500, err.Error()
 	}
 
