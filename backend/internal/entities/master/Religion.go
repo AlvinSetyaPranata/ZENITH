@@ -2,7 +2,7 @@ package entities
 
 import "time"
 
-type Region struct {
+type Religion struct {
 	Id          uint      `gorm:"column:id;primaryKey"`
 	Name        string    `gorm:"column:name;unique"`
 	DateCreated time.Time `gorm:"column:date_created;autoCreateTime"`

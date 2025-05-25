@@ -24,26 +24,31 @@ func BoostrapRoute(config *BoostrapConfig) {
 	// Repositories
 	config.Log.Debug("Boostraping all repositories")
 	cityRepository := repositories.NewCityRepository(config.DB, config.Log)
+	religionRepository := repositories.NewReligionRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all repositories")
 
 	cityService := services.NewCityService(cityRepository, config.Log)
+	religionService := services.NewReligionService(religionRepository, config.Log)
 
 	// Presenters
 
 	config.Log.Debug("Boostraping all presenters")
 	cityPresenter := presenters.NewCityPresenter(cityService, config.Log)
+	religionPresenter := presenters.NewReligionPresenter(religionService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all handlers")
 	cityHandler := handlers.NewCityHandler(cityPresenter, config.Log)
+	religionHandler := handlers.NewReligionHandler(religionPresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
 	route := routes.RouteConfig{
-		App:         config.App,
-		CityHandler: cityHandler,
+		App:             config.App,
+		CityHandler:     cityHandler,
+		ReligionHandler: religionHandler,
 	}
 
 	config.Log.Debug("Configuring routers")
@@ -55,9 +60,10 @@ func Migrate(config *BoostrapConfig) bool {
 
 	config.Log.Debug("Migrating schema to database")
 
-	cityEntity := &entities.City{}
-
-	err := config.DB.AutoMigrate(cityEntity)
+	err := config.DB.AutoMigrate(
+		&entities.City{},
+		&entities.Religion{},
+	)
 
 	if err != nil {
 		config.Log.Panicf("Error occured during migrating schema: %s", err)
