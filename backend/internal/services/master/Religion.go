@@ -72,7 +72,7 @@ func (service *ReligionService) GetReligionByID(ctx *fiber.Ctx) (*entities.Relig
 
 }
 
-func (service *ReligionService) Update(ctx *fiber.Ctx) (*entities.Religion, int, string) {
+func (service *ReligionService) Update(ctx *fiber.Ctx, religionRequest *model.ReligionyModelRequest) (*entities.Religion, int, string) {
 
 	id := ctx.Params("id", "")
 
@@ -80,14 +80,25 @@ func (service *ReligionService) Update(ctx *fiber.Ctx) (*entities.Religion, int,
 		return nil, 400, "Invalid Request!"
 	}
 
-	newReligionData := new(entities.Religion)
-	updatedReligionData := new(entities.Religion)
-
-	if err := ctx.BodyParser(newReligionData); err != nil {
-		return nil, 400, "Invalid Request"
+	if err := ctx.BodyParser(religionRequest); err != nil {
+		return nil, 400, "Invalid Request!"
 	}
 
-	if err := service.ReligionRepository.Update(ctx.UserContext(), newReligionData, updatedReligionData, id); err != nil {
+	// Get current religion data
+
+	currentReligionData := new(entities.Religion)
+
+	if err := service.ReligionRepository.GetByID(ctx.UserContext(), currentReligionData, id); err != nil {
+		return nil, 404, "Religion with given ID is not found!"
+	}
+
+	updatedReligionData := &entities.Religion{
+		Id:          currentReligionData.Id,
+		Name:        religionRequest.Name,
+		DateCreated: currentReligionData.DateCreated,
+	}
+
+	if err := service.ReligionRepository.Update(ctx.UserContext(), updatedReligionData, id); err != nil {
 		return nil, 500, err.Error()
 	}
 
@@ -95,17 +106,17 @@ func (service *ReligionService) Update(ctx *fiber.Ctx) (*entities.Religion, int,
 
 }
 
-func (service *ReligionService) Delete(ctx *fiber.Ctx) (*entities.Religion, int, string) {
+func (service *ReligionService) Delete(ctx *fiber.Ctx) (int, string) {
 	id := ctx.Params("id", "")
 	deletedEntity := new(entities.Religion)
 
 	if id == "" {
-		return nil, 400, "Invalid Request!"
+		return 400, "Invalid Request!"
 	}
 
 	if err := service.ReligionRepository.Delete(ctx.UserContext(), deletedEntity, id); err != nil {
-		return nil, 500, err.Error()
+		return 500, err.Error()
 	}
 
-	return deletedEntity, 200, "Religion data with given id, has been deleted successfully"
+	return 204, ""
 }

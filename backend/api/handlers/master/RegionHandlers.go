@@ -21,6 +21,7 @@ func NewReligionHandler(religionPresenter *presenters.ReligionPresenter, log *za
 // Core Religion handlers
 
 func (handler *ReligionHandler) Create(ctx *fiber.Ctx) error {
+
 	data, status, messege := handler.ReligionPresenter.CreateNewReligionData(ctx)
 
 	return ctx.Status(status).JSON(fiber.Map{
@@ -58,10 +59,14 @@ func (handler *ReligionHandler) Update(ctx *fiber.Ctx) error {
 }
 
 func (handler *ReligionHandler) Delete(ctx *fiber.Ctx) error {
-	data, status, messege := handler.ReligionPresenter.DeleteReligionData(ctx)
+	status, messege := handler.ReligionPresenter.DeleteReligionData(ctx)
 
-	return ctx.Status(status).JSON(fiber.Map{
-		"messege": messege,
-		"data":    data,
-	})
+	if messege != "" {
+		return ctx.Status(status).JSON(fiber.Map{
+			"messege": messege,
+		})
+	}
+
+	return ctx.SendStatus(status)
+
 }

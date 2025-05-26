@@ -33,9 +33,7 @@ func (repository *ReligionRepository) Create(ctx context.Context, entity *entiti
 		}
 	}()
 
-	success = true
-
-	if err := tx.Create(entity).Error; err != nil {
+	if err := repository.DB.Create(entity).Error; err != nil {
 		return err
 	}
 
@@ -43,6 +41,7 @@ func (repository *ReligionRepository) Create(ctx context.Context, entity *entiti
 		return err
 	}
 
+	success = true
 	return nil
 
 }
@@ -57,12 +56,11 @@ func (repository *ReligionRepository) GetAll(ctx context.Context, entity *[]enti
 		}
 	}()
 
-	success = true
-
-	if err := tx.Find(entity).Error; err != nil {
+	if err := repository.DB.Find(entity).Error; err != nil {
 		return err
 	}
 
+	success = true
 	return nil
 }
 
@@ -76,16 +74,15 @@ func (repository *ReligionRepository) GetByID(ctx context.Context, entity *entit
 		}
 	}()
 
-	success = true
-
-	if err := tx.Where("id = ?", id).Take(entity).Error; err != nil {
+	if err := repository.DB.Where("id = ?", id).Take(entity).Error; err != nil {
 		return err
 	}
 
+	success = true
 	return nil
 }
 
-func (repository *ReligionRepository) Update(ctx context.Context, entity *entities.Religion, newEntity *entities.Religion, id string) error {
+func (repository *ReligionRepository) Update(ctx context.Context, newEntity *entities.Religion, id string) error {
 	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
 
@@ -95,9 +92,7 @@ func (repository *ReligionRepository) Update(ctx context.Context, entity *entiti
 		}
 	}()
 
-	success = true
-
-	if err := tx.Save(entity).Error; err != nil {
+	if err := repository.DB.Where("id = ?", id).Updates(newEntity).Error; err != nil {
 		return err
 	}
 
@@ -105,6 +100,7 @@ func (repository *ReligionRepository) Update(ctx context.Context, entity *entiti
 		return err
 	}
 
+	success = true
 	return nil
 }
 
@@ -118,9 +114,7 @@ func (repository *ReligionRepository) Delete(ctx context.Context, entity *entiti
 		}
 	}()
 
-	success = true
-
-	if err := tx.Where("id = ?", id).Delete(entity).Error; err != nil {
+	if err := repository.DB.Where("id = ?", id).Delete(entity).Error; err != nil {
 		return err
 	}
 
@@ -128,5 +122,6 @@ func (repository *ReligionRepository) Delete(ctx context.Context, entity *entiti
 		return err
 	}
 
+	success = true
 	return nil
 }
