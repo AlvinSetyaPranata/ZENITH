@@ -73,10 +73,15 @@ func (h *CityHandler) Delete(ctx *fiber.Ctx) error {
 	// Extract id params
 	id := ctx.Params("id", "")
 
-	data, status, messege := h.Presenter.DeleteCity(ctx, id)
+	status, messege := h.Presenter.DeleteCity(ctx, id)
 
-	return ctx.Status(status).JSON(fiber.Map{
-		"messege": messege,
-		"data":    data,
-	})
+	if status != 204 {
+
+		return ctx.Status(status).JSON(fiber.Map{
+			"messege": messege,
+		})
+	}
+
+	return ctx.SendStatus(status)
+
 }

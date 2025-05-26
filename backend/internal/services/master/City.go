@@ -98,19 +98,19 @@ func (service *CityService) UpdateCityData(ctx *fiber.Ctx, cityModelRequest *mod
 
 }
 
-func (service *CityService) DeleteCityData(ctx *fiber.Ctx, id string) (*entities.City, int, string) {
+func (service *CityService) DeleteCityData(ctx *fiber.Ctx, id string) (int, string) {
 
 	city := new(entities.City)
 
 	// Get city data
 	if err := service.CityRepository.GetById(ctx.UserContext(), city, id); errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, 404, "City with given id, is not found!"
+		return 404, "City with given id, is not found!"
 	}
 
 	if err := service.CityRepository.Delete(ctx.UserContext(), city, id); err != nil {
-		return nil, 500, err.Error()
+		return 500, err.Error()
 	}
 
-	return city, 200, "City with given id, has deleted successfully!"
+	return 204, ""
 
 }

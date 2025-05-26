@@ -101,20 +101,14 @@ func (p *CityPresenter) UpdateCityData(ctx *fiber.Ctx, id string) (*master.CityM
 
 }
 
-func (p *CityPresenter) DeleteCity(ctx *fiber.Ctx, id string) (*master.CityModelResponse, int, string) {
+func (p *CityPresenter) DeleteCity(ctx *fiber.Ctx, id string) (int, string) {
 
-	city, status, messege := p.Service.DeleteCityData(ctx, id)
+	status, messege := p.Service.DeleteCityData(ctx, id)
 
-	if status != 200 {
-		return nil, status, messege
+	if status != 204 {
+		return status, messege
 	}
 
-	response := &master.CityModelResponse{
-		Id:          city.Id,
-		Name:        city.Name,
-		DateCreated: city.DateCreated,
-	}
-
-	return response, status, messege
+	return status, ""
 
 }
