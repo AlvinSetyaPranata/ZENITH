@@ -25,23 +25,27 @@ func BoostrapRoute(config *BoostrapConfig) {
 	config.Log.Debug("Boostraping all repositories")
 	cityRepository := repositories.NewCityRepository(config.DB, config.Log)
 	religionRepository := repositories.NewReligionRepository(config.DB, config.Log)
+	genderRepisotory := repositories.NewGenderRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all repositories")
 
 	cityService := services.NewCityService(cityRepository, config.Log)
 	religionService := services.NewReligionService(religionRepository, config.Log)
+	genderService := services.NewGenderService(genderRepisotory, config.Log)
 
 	// Presenters
 
 	config.Log.Debug("Boostraping all presenters")
 	cityPresenter := presenters.NewCityPresenter(cityService, config.Log)
 	religionPresenter := presenters.NewReligionPresenter(religionService, config.Log)
+	genderPresenter := presenters.NewGenderPresenter(genderService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all handlers")
 	cityHandler := handlers.NewCityHandler(cityPresenter, config.Log)
 	religionHandler := handlers.NewReligionHandler(religionPresenter, config.Log)
+	genderHandler := handlers.NewGenderHandler(genderPresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -49,6 +53,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 		App:             config.App,
 		CityHandler:     cityHandler,
 		ReligionHandler: religionHandler,
+		GenderHandler:   genderHandler,
 	}
 
 	config.Log.Debug("Configuring routers")
@@ -63,6 +68,7 @@ func Migrate(config *BoostrapConfig) bool {
 	err := config.DB.AutoMigrate(
 		&entities.City{},
 		&entities.Religion{},
+		&entities.Gender{},
 	)
 
 	if err != nil {

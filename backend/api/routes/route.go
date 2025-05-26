@@ -9,6 +9,7 @@ type RouteConfig struct {
 	App             *fiber.App
 	CityHandler     *handlers.CityHandler
 	ReligionHandler *handlers.ReligionHandler
+	GenderHandler   *handlers.GenderHandler
 }
 
 func (r *RouteConfig) SetupRoute() {
@@ -26,4 +27,11 @@ func (r *RouteConfig) SetupRoute() {
 	r.App.Post("/api/religion", r.ReligionHandler.Create)
 	r.App.Put("/api/religion/:id", r.ReligionHandler.Update)
 	r.App.Delete("/api/religion/:id", r.ReligionHandler.Delete)
+
+	// Gender routes
+	r.App.Get("/api/genders", r.GenderHandler.GetAllGenderData)
+	r.App.Get("/api/gender/:id", r.GenderHandler.GetGenderDataById)
+	r.App.Post("/api/gender", r.GenderHandler.CreateGenderData)
+	r.App.Put("/api/gender/:id", r.GenderHandler.UpdateGenderData)
+	r.App.Delete("/api/gender/:id", r.GenderHandler.DeleteGenderData)
 }
