@@ -30,8 +30,8 @@ bun run dev  # or npm run dev
 Access the app at `http://localhost:3000`.  
 
 ## 🛠 Tech Stack  
-- **Frontend:** Solid.js  
-- **Backend:** Django + DRF  
+- **Frontend:** Solid Start
+- **Backend:** Gofiber 
 - **Database:** PostgreSQL  
 
 ## 📜 License  
