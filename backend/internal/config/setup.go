@@ -28,6 +28,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	genderRepisotory := repositories.NewGenderRepository(config.DB, config.Log)
 	facultyRepository := repositories.NewFacultyRepository(config.DB, config.Log)
 	provinceRepository := repositories.NewProvinceRepository(config.DB, config.Log)
+	studyProgramRepository := repositories.NewStudyProgRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all repositories")
@@ -37,6 +38,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	genderService := services.NewGenderService(genderRepisotory, config.Log)
 	facultyService := services.NewFacultyService(facultyRepository, config.Log)
 	provinceService := services.NewProvinceService(provinceRepository, config.Log)
+	studyProgramService := services.NewStudyProgramService(studyProgramRepository, config.Log)
 
 	// Presenters
 
@@ -46,6 +48,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	genderPresenter := presenters.NewGenderPresenter(genderService, config.Log)
 	facultyPresenter := presenters.NewFacultyPresenter(facultyService, config.Log)
 	provincePresenter := presenters.NewProvincePresenter(provinceService, config.Log)
+	studyProgramPresenter := presenters.NewStudyProgramPresenter(studyProgramService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all handlers")
@@ -54,16 +57,18 @@ func BoostrapRoute(config *BoostrapConfig) {
 	genderHandler := handlers.NewGenderHandler(genderPresenter, config.Log)
 	facultyHandler := handlers.NewFacultyHandler(facultyPresenter, config.Log)
 	provinceHandler := handlers.NewProvincesHandler(provincePresenter, config.Log)
+	studyProgramHandler := handlers.NewStudyProgramHandler(studyProgramPresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
 	route := routes.RouteConfig{
-		App:             config.App,
-		CityHandler:     cityHandler,
-		ReligionHandler: religionHandler,
-		GenderHandler:   genderHandler,
-		FacultyHandler:  facultyHandler,
-		ProvinceHandler: provinceHandler,
+		App:                 config.App,
+		CityHandler:         cityHandler,
+		ReligionHandler:     religionHandler,
+		GenderHandler:       genderHandler,
+		FacultyHandler:      facultyHandler,
+		ProvinceHandler:     provinceHandler,
+		StudyProgramHandler: studyProgramHandler,
 	}
 
 	config.Log.Debug("Configuring routers")
@@ -81,6 +86,9 @@ func Migrate(config *BoostrapConfig) bool {
 		&entities.Gender{},
 		&entities.Faculty{},
 		&entities.Province{},
+		&entities.StudyProgram{},
+		&entities.Status{},
+		&entities.Country{},
 	)
 
 	if err != nil {
