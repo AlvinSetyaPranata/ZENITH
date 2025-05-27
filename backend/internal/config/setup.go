@@ -27,6 +27,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	religionRepository := repositories.NewReligionRepository(config.DB, config.Log)
 	genderRepisotory := repositories.NewGenderRepository(config.DB, config.Log)
 	facultyRepository := repositories.NewFacultyRepository(config.DB, config.Log)
+	provinceRepository := repositories.NewProvinceRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all repositories")
@@ -35,6 +36,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	religionService := services.NewReligionService(religionRepository, config.Log)
 	genderService := services.NewGenderService(genderRepisotory, config.Log)
 	facultyService := services.NewFacultyService(facultyRepository, config.Log)
+	provinceService := services.NewProvinceService(provinceRepository, config.Log)
 
 	// Presenters
 
@@ -43,6 +45,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	religionPresenter := presenters.NewReligionPresenter(religionService, config.Log)
 	genderPresenter := presenters.NewGenderPresenter(genderService, config.Log)
 	facultyPresenter := presenters.NewFacultyPresenter(facultyService, config.Log)
+	provincePresenter := presenters.NewProvincePresenter(provinceService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all handlers")
@@ -50,6 +53,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	religionHandler := handlers.NewReligionHandler(religionPresenter, config.Log)
 	genderHandler := handlers.NewGenderHandler(genderPresenter, config.Log)
 	facultyHandler := handlers.NewFacultyHandler(facultyPresenter, config.Log)
+	provinceHandler := handlers.NewProvincesHandler(provincePresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -59,6 +63,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 		ReligionHandler: religionHandler,
 		GenderHandler:   genderHandler,
 		FacultyHandler:  facultyHandler,
+		ProvinceHandler: provinceHandler,
 	}
 
 	config.Log.Debug("Configuring routers")
@@ -75,6 +80,7 @@ func Migrate(config *BoostrapConfig) bool {
 		&entities.Religion{},
 		&entities.Gender{},
 		&entities.Faculty{},
+		&entities.Province{},
 	)
 
 	if err != nil {
