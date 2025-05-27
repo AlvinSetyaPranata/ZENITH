@@ -44,7 +44,7 @@ func (repository *FacultyRepository) Create(ctx context.Context, faculty *entiti
 	return nil
 }
 
-func (repository *FacultyRepository) GetAll(ctx context.Context, facultyEntity *entities.Faculty) error {
+func (repository *FacultyRepository) GetAll(ctx context.Context, facultyEntity *[]entities.Faculty) error {
 
 	if err := repository.DB.Find(facultyEntity); err != nil {
 		return err.Error
@@ -53,8 +53,8 @@ func (repository *FacultyRepository) GetAll(ctx context.Context, facultyEntity *
 	return nil
 }
 
-func (repository *FacultyRepository) GetById(ctx context.Context, facultyEntity *entities.Faculty) error {
-	if err := repository.DB.First(facultyEntity, facultyEntity.Id); err != nil {
+func (repository *FacultyRepository) GetById(ctx context.Context, facultyEntity *entities.Faculty, id string) error {
+	if err := repository.DB.Where("id = ?", id).First(facultyEntity); err != nil {
 		return err.Error
 	}
 
@@ -82,7 +82,7 @@ func (repository *FacultyRepository) Update(ctx context.Context, facultyEntity *
 	success = true
 	return nil
 }
-func (repository *FacultyRepository) Delete(ctx context.Context, facultyEntity *entities.Faculty) error {
+func (repository *FacultyRepository) Delete(ctx context.Context, facultyEntity *entities.Faculty, id string) error {
 	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
 
@@ -92,7 +92,7 @@ func (repository *FacultyRepository) Delete(ctx context.Context, facultyEntity *
 		}
 	}()
 
-	if err := repository.DB.Delete(facultyEntity, facultyEntity.Id); err != nil {
+	if err := repository.DB.Where("id = ?", id).Delete(facultyEntity); err != nil {
 		return err.Error
 	}
 
