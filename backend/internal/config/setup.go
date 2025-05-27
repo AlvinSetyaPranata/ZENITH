@@ -30,9 +30,10 @@ func BoostrapRoute(config *BoostrapConfig) {
 	provinceRepository := repositories.NewProvinceRepository(config.DB, config.Log)
 	studyProgramRepository := repositories.NewStudyProgRepository(config.DB, config.Log)
 	countryRepository := repositories.NewCountryRepository(config.DB, config.Log)
+	statusRepository := repositories.NewStatusRepository(config.DB, config.Log)
 
 	// Services
-	config.Log.Debug("Boostraping all repositories")
+	config.Log.Debug("Boostraping all services")
 
 	cityService := services.NewCityService(cityRepository, config.Log)
 	religionService := services.NewReligionService(religionRepository, config.Log)
@@ -41,6 +42,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	provinceService := services.NewProvinceService(provinceRepository, config.Log)
 	studyProgramService := services.NewStudyProgramService(studyProgramRepository, config.Log)
 	countryService := services.NewCountryService(countryRepository, config.Log)
+	statusService := services.NewStatusService(statusRepository, config.Log)
 
 	// Presenters
 
@@ -52,6 +54,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	provincePresenter := presenters.NewProvincePresenter(provinceService, config.Log)
 	studyProgramPresenter := presenters.NewStudyProgramPresenter(studyProgramService, config.Log)
 	countryPresenter := presenters.NewCountryPresenter(countryService, config.Log)
+	statusPresenter := presenters.NewStatusPresenter(statusService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all handlers")
@@ -62,6 +65,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	provinceHandler := handlers.NewProvincesHandler(provincePresenter, config.Log)
 	studyProgramHandler := handlers.NewStudyProgramHandler(studyProgramPresenter, config.Log)
 	countryHandler := handlers.NewCountryHandler(countryPresenter, config.Log)
+	statusHandler := handlers.NewStatusHandler(statusPresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -74,6 +78,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 		ProvinceHandler:     provinceHandler,
 		StudyProgramHandler: studyProgramHandler,
 		CountryHandler:      countryHandler,
+		StatusHandler:       statusHandler,
 	}
 
 	config.Log.Debug("Configuring routers")

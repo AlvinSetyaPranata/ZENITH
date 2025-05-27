@@ -14,6 +14,7 @@ type RouteConfig struct {
 	ProvinceHandler     *handlers.ProvincesHandler
 	StudyProgramHandler *handlers.StudyProgramHandler
 	CountryHandler      *handlers.CountryHandler
+	StatusHandler       *handlers.StatusHandler
 }
 
 func (r *RouteConfig) SetupRoute() {
@@ -66,4 +67,11 @@ func (r *RouteConfig) SetupRoute() {
 	r.App.Post("/api/country", r.CountryHandler.CreateCountryData)
 	r.App.Put("/api/country/:id", r.CountryHandler.UpdateCountryData)
 	r.App.Delete("/api/country/:id", r.CountryHandler.DeleteCountryData)
+
+	// Status routes
+	r.App.Get("/api/statuses", r.StatusHandler.GetAllStatusesData)
+	r.App.Get("/api/status/:id", r.StatusHandler.GetStatusDataByID)
+	r.App.Post("/api/status", r.StatusHandler.CreateStatusData)
+	r.App.Put("/api/status/:id", r.StatusHandler.UpdateStatusData)
+	r.App.Delete("/api/status/:id", r.StatusHandler.DeleteStatusData)
 }
