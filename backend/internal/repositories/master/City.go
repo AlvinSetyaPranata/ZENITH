@@ -4,21 +4,18 @@ import (
 	"context"
 
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
-	"github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 type CityRepository struct {
-	repositories.BaseRepository[entities.City]
+	DB  *gorm.DB
 	Log *zap.SugaredLogger
 }
 
 func NewCityRepository(db *gorm.DB, log *zap.SugaredLogger) *CityRepository {
 	return &CityRepository{
-		BaseRepository: repositories.BaseRepository[entities.City]{
-			DB: db,
-		},
+		DB:  db,
 		Log: log,
 	}
 }
