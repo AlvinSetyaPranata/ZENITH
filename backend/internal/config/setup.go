@@ -26,6 +26,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	cityRepository := repositories.NewCityRepository(config.DB, config.Log)
 	religionRepository := repositories.NewReligionRepository(config.DB, config.Log)
 	genderRepisotory := repositories.NewGenderRepository(config.DB, config.Log)
+	facultyRepository := repositories.NewFacultyRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all repositories")
@@ -33,6 +34,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 	cityService := services.NewCityService(cityRepository, config.Log)
 	religionService := services.NewReligionService(religionRepository, config.Log)
 	genderService := services.NewGenderService(genderRepisotory, config.Log)
+	facultyService := services.NewFacultyService(facultyRepository, config.Log)
 
 	// Presenters
 
@@ -40,12 +42,14 @@ func BoostrapRoute(config *BoostrapConfig) {
 	cityPresenter := presenters.NewCityPresenter(cityService, config.Log)
 	religionPresenter := presenters.NewReligionPresenter(religionService, config.Log)
 	genderPresenter := presenters.NewGenderPresenter(genderService, config.Log)
+	facultyPresenter := presenters.NewFacultyPresenter(facultyService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all handlers")
 	cityHandler := handlers.NewCityHandler(cityPresenter, config.Log)
 	religionHandler := handlers.NewReligionHandler(religionPresenter, config.Log)
 	genderHandler := handlers.NewGenderHandler(genderPresenter, config.Log)
+	facultyHandler := handlers.NewFacultyHandler(facultyPresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -54,6 +58,7 @@ func BoostrapRoute(config *BoostrapConfig) {
 		CityHandler:     cityHandler,
 		ReligionHandler: religionHandler,
 		GenderHandler:   genderHandler,
+		FacultyHandler:  facultyHandler,
 	}
 
 	config.Log.Debug("Configuring routers")
@@ -69,6 +74,7 @@ func Migrate(config *BoostrapConfig) bool {
 		&entities.City{},
 		&entities.Religion{},
 		&entities.Gender{},
+		&entities.Faculty{},
 	)
 
 	if err != nil {
