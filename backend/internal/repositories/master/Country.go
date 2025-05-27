@@ -1,0 +1,128 @@
+package master
+
+import (
+	"context"
+
+	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+)
+
+type CountryRepository struct {
+	DB  *gorm.DB
+	Log *zap.SugaredLogger
+}
+
+func NewCountryRepository(db *gorm.DB, log *zap.SugaredLogger) *CountryRepository {
+	return &CountryRepository{
+		DB:  db,
+		Log: log,
+	}
+}
+
+// Repositories
+
+func (repository *CountryRepository) Create(ctx context.Context, data *entities.Country) error {
+	tx := repository.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Create(&data).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
+	success = true
+	return nil
+}
+
+func (repository *CountryRepository) GetAll(ctx context.Context, entities *[]entities.Country) error {
+	tx := repository.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Find(entities).Error; err != nil {
+		return err
+	}
+
+	success = true
+	return nil
+}
+
+func (repository *CountryRepository) GetById(ctx context.Context, entity *entities.Country, id string) error {
+	tx := repository.DB.WithContext(ctx).Begin()
+	success := true
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Where("id = ?", id).Take(entity).Error; err != nil {
+		return err
+	}
+
+	success = true
+	return nil
+
+}
+
+func (repository *CountryRepository) Update(ctx context.Context, updatedEntity *entities.Country, id string) error {
+	tx := repository.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Where("id = ?", id).Updates(updatedEntity).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
+	success = true
+	return nil
+
+}
+
+func (repository *CountryRepository) Delete(ctx context.Context, entityToDelete *entities.Country, id string) error {
+	tx := repository.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Where("id = ?", id).Delete(entityToDelete); err != nil {
+		return err.Error
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err.Error
+	}
+
+	success = true
+
+	return nil
+}
