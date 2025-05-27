@@ -27,6 +27,8 @@ func main() {
 		return
 	}
 
+	// config.Log.Debug("Configuring middlewares")
+
 	config.Log.Debug("All configurations succesfully configured, yay!")
 	config.Log.Debugf("Server is on air, listening to http://127.0.0.1:%s", DEFAULT_PORT)
 
