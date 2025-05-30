@@ -1,77 +1,116 @@
 package routes
 
 import (
-	handlers "github.com/AlvinSetyaPranata/ZENITH/backend/api/handlers/master"
+	authHandler "github.com/AlvinSetyaPranata/ZENITH/backend/api/handlers/auth"
+	masterHandler "github.com/AlvinSetyaPranata/ZENITH/backend/api/handlers/master"
+	authPresenters "github.com/AlvinSetyaPranata/ZENITH/backend/api/presenters/auth"
+	masterPresenters "github.com/AlvinSetyaPranata/ZENITH/backend/api/presenters/master"
+	protectedRoute "github.com/AlvinSetyaPranata/ZENITH/backend/api/routes/protected"
+	authRepository "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/auth"
+	masterRepository "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/master"
+	authServices "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/auth"
+	masterService "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/master"
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
-type RouteConfig struct {
-	App                 *fiber.App
-	CityHandler         *handlers.CityHandler
-	ReligionHandler     *handlers.ReligionHandler
-	GenderHandler       *handlers.GenderHandler
-	FacultyHandler      *handlers.FacultyHandler
-	ProvinceHandler     *handlers.ProvincesHandler
-	StudyProgramHandler *handlers.StudyProgramHandler
-	CountryHandler      *handlers.CountryHandler
-	StatusHandler       *handlers.StatusHandler
+type BoostrapConfig struct {
+	App *fiber.App
+	DB  *gorm.DB
+	Log *zap.SugaredLogger
 }
 
-func (r *RouteConfig) SetupRoute() {
+func BoostrapMasterRoute(config *BoostrapConfig) {
 
-	// City routes
-	r.App.Get("/api/cities", r.CityHandler.Get)
-	r.App.Get("/api/city/:id", r.CityHandler.GetById)
-	r.App.Post("/api/city", r.CityHandler.Create)
-	r.App.Put("/api/city/:id", r.CityHandler.Update)
-	r.App.Delete("/api/city/:id", r.CityHandler.Delete)
+	// masterRepository
+	config.Log.Debug("Boostraping all master data masterRepository")
+	cityRepository := masterRepository.NewCityRepository(config.DB, config.Log)
+	religionRepository := masterRepository.NewReligionRepository(config.DB, config.Log)
+	genderRepisotory := masterRepository.NewGenderRepository(config.DB, config.Log)
+	facultyRepository := masterRepository.NewFacultyRepository(config.DB, config.Log)
+	provinceRepository := masterRepository.NewProvinceRepository(config.DB, config.Log)
+	studyProgramRepository := masterRepository.NewStudyProgRepository(config.DB, config.Log)
+	countryRepository := masterRepository.NewCountryRepository(config.DB, config.Log)
+	statusRepository := masterRepository.NewStatusRepository(config.DB, config.Log)
 
-	// Religion routes
-	r.App.Get("/api/religions", r.ReligionHandler.GetAll)
-	r.App.Get("/api/religion/:id", r.ReligionHandler.GetByID)
-	r.App.Post("/api/religion", r.ReligionHandler.Create)
-	r.App.Put("/api/religion/:id", r.ReligionHandler.Update)
-	r.App.Delete("/api/religion/:id", r.ReligionHandler.Delete)
+	// Services
+	config.Log.Debug("Boostraping all master data services")
 
-	// Gender routes
-	r.App.Get("/api/genders", r.GenderHandler.GetAllGenderData)
-	r.App.Get("/api/gender/:id", r.GenderHandler.GetGenderDataById)
-	r.App.Post("/api/gender", r.GenderHandler.CreateGenderData)
-	r.App.Put("/api/gender/:id", r.GenderHandler.UpdateGenderData)
-	r.App.Delete("/api/gender/:id", r.GenderHandler.DeleteGenderData)
+	cityService := masterService.NewCityService(cityRepository, config.Log)
+	religionService := masterService.NewReligionService(religionRepository, config.Log)
+	genderService := masterService.NewGenderService(genderRepisotory, config.Log)
+	facultyService := masterService.NewFacultyService(facultyRepository, config.Log)
+	provinceService := masterService.NewProvinceService(provinceRepository, config.Log)
+	studyProgramService := masterService.NewStudyProgramService(studyProgramRepository, config.Log)
+	countryService := masterService.NewCountryService(countryRepository, config.Log)
+	statusService := masterService.NewStatusService(statusRepository, config.Log)
 
-	// Faculty routes
-	r.App.Get("/api/faculties", r.FacultyHandler.GetAllFacultiesHandler)
-	r.App.Get("/api/faculty/:id", r.FacultyHandler.GetFacultyByIdHandler)
-	r.App.Post("/api/faculty", r.FacultyHandler.CreateFacultyHandler)
-	r.App.Put("/api/faculty/:id", r.FacultyHandler.UpdateFacultyHandler)
-	r.App.Delete("/api/faculty/:id", r.FacultyHandler.DeleteFaculty)
+	// Presenters
 
-	// Province routes
-	r.App.Get("/api/provinces", r.ProvinceHandler.GetAllProvincesHandler)
-	r.App.Get("/api/province/:id", r.ProvinceHandler.GetprovinceByIdHandler)
-	r.App.Post("/api/province", r.ProvinceHandler.CreateProvincesHandler)
-	r.App.Put("/api/province/:id", r.ProvinceHandler.UpdateProvincesHandler)
-	r.App.Delete("/api/province/:id", r.ProvinceHandler.Deleteprovince)
+	config.Log.Debug("Boostraping all master data presenters")
+	cityPresenter := masterPresenters.NewCityPresenter(cityService, config.Log)
+	religionPresenter := masterPresenters.NewReligionPresenter(religionService, config.Log)
+	genderPresenter := masterPresenters.NewGenderPresenter(genderService, config.Log)
+	facultyPresenter := masterPresenters.NewFacultyPresenter(facultyService, config.Log)
+	provincePresenter := masterPresenters.NewProvincePresenter(provinceService, config.Log)
+	studyProgramPresenter := masterPresenters.NewStudyProgramPresenter(studyProgramService, config.Log)
+	countryPresenter := masterPresenters.NewCountryPresenter(countryService, config.Log)
+	statusPresenter := masterPresenters.NewStatusPresenter(statusService, config.Log)
 
-	// Study Program routes
-	r.App.Get("/api/study-programs", r.StudyProgramHandler.GetAllStudyProgramHandler)
-	r.App.Get("/api/study-program/:id", r.StudyProgramHandler.GetStudyProgramByIdHandler)
-	r.App.Post("/api/study-program", r.StudyProgramHandler.CreateStudyProgramHandler)
-	r.App.Put("/api/study-program/:id", r.StudyProgramHandler.UpdateStudyProgramHandler)
-	r.App.Delete("/api/study-program/:id", r.StudyProgramHandler.DeleteStudyProgram)
+	// Handlers
+	config.Log.Debug("Boostraping all master data handlers")
+	cityHandler := masterHandler.NewCityHandler(cityPresenter, config.Log)
+	religionHandler := masterHandler.NewReligionHandler(religionPresenter, config.Log)
+	genderHandler := masterHandler.NewGenderHandler(genderPresenter, config.Log)
+	facultyHandler := masterHandler.NewFacultyHandler(facultyPresenter, config.Log)
+	provinceHandler := masterHandler.NewProvincesHandler(provincePresenter, config.Log)
+	studyProgramHandler := masterHandler.NewStudyProgramHandler(studyProgramPresenter, config.Log)
+	countryHandler := masterHandler.NewCountryHandler(countryPresenter, config.Log)
+	statusHandler := masterHandler.NewStatusHandler(statusPresenter, config.Log)
 
-	// Country routes
-	r.App.Get("/api/countries", r.CountryHandler.GetAllCountriesData)
-	r.App.Get("/api/country/:id", r.CountryHandler.GetCountryDataById)
-	r.App.Post("/api/country", r.CountryHandler.CreateCountryData)
-	r.App.Put("/api/country/:id", r.CountryHandler.UpdateCountryData)
-	r.App.Delete("/api/country/:id", r.CountryHandler.DeleteCountryData)
+	config.Log.Debug("So far, no problem, good!")
 
-	// Status routes
-	r.App.Get("/api/statuses", r.StatusHandler.GetAllStatusesData)
-	r.App.Get("/api/status/:id", r.StatusHandler.GetStatusDataByID)
-	r.App.Post("/api/status", r.StatusHandler.CreateStatusData)
-	r.App.Put("/api/status/:id", r.StatusHandler.UpdateStatusData)
-	r.App.Delete("/api/status/:id", r.StatusHandler.DeleteStatusData)
+	route := protectedRoute.MasterConfig{
+		App:                 config.App,
+		CityHandler:         cityHandler,
+		ReligionHandler:     religionHandler,
+		GenderHandler:       genderHandler,
+		FacultyHandler:      facultyHandler,
+		ProvinceHandler:     provinceHandler,
+		StudyProgramHandler: studyProgramHandler,
+		CountryHandler:      countryHandler,
+		StatusHandler:       statusHandler,
+	}
+
+	config.Log.Debug("Setuping master data routers")
+	route.SetupMasterRoute()
+	config.Log.Debug("Master data routers has been configured succesfully!")
+
+}
+
+func BoostrapAuthRoute(config *BoostrapConfig) {
+	// Boostrap auth route
+
+	permissionRepository := authRepository.NewPermissionRepository(config.DB, config.Log)
+
+	// Boostrap auth services
+	permissionService := authServices.NewPermissionService(permissionRepository, config.Log)
+
+	// Boostrap auth presenters
+	permissionPresenter := authPresenters.NewPermissionPresenter(permissionService, config.Log)
+
+	// Boostrap auth presenters
+	permissionHandler := authHandler.NewPermissionHandler(permissionPresenter)
+
+	config.Log.Debug("Auth route successfully boostrapped, yay!")
+
+	config.Log.Debug("Setting up, auth route")
+	route := protectedRoute.AuthConfig{
+		App:               config.App,
+		PermissionHandler: permissionHandler,
+	}
+	route.SetupAuthRoute()
+	config.Log.Debug("Auth route successfully boostrapped, yay!")
+
 }
