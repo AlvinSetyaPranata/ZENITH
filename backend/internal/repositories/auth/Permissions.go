@@ -46,10 +46,24 @@ func (repository *PermissionRepository) Create(ctx context.Context, permisisonEn
 }
 
 func (repository *PermissionRepository) GetAll(ctx context.Context, permissionEntities *[]entities.Permission) error {
+	tx := repository.DB.WithContext(ctx).Begin()
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
 	if err := repository.DB.Find(permissionEntities); err != nil {
 		return err.Error
 	}
 
+	if err := tx.Commit(); err != nil {
+		return err.Error
+	}
+
+	success = true
 	return nil
 }
 

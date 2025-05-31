@@ -51,7 +51,7 @@ func (Presenter *PermissionPresenter) GetAllPermissionsPresenter(ctx *fiber.Ctx)
 
 	response := make([]models.PermissionResponse, 0, len(*permissionEntities))
 
-	for _, permission := range response {
+	for _, permission := range *permissionEntities {
 		response = append(response, models.PermissionResponse{
 			Id:          permission.Id,
 			Name:        permission.Name,

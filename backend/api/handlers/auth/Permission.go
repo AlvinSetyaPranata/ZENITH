@@ -53,6 +53,10 @@ func (Handler *PermissionHandler) UpdatePermissionHandler(ctx *fiber.Ctx) error 
 func (Handler *PermissionHandler) DeletePermissionHandler(ctx *fiber.Ctx) error {
 	status, messege := Handler.PermissionPresenter.DeletePermissionPresenter(ctx)
 
+	if messege == "" {
+		return ctx.SendStatus(status)
+	}
+
 	return ctx.Status(status).JSON(fiber.Map{
 		"messege": messege,
 	})

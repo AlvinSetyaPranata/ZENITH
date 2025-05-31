@@ -124,5 +124,5 @@ func (Service *PermissionService) DeletePermissionService(ctx *fiber.Ctx) (int, 
 		return 500, err.Error()
 	}
 
-	return 200, ""
+	return 204, ""
 }
