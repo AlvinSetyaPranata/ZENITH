@@ -2,7 +2,8 @@ package config
 
 import (
 	"github.com/AlvinSetyaPranata/ZENITH/backend/api/routes"
-	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
+	authEntities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/auth"
+	masterEntities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/master"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -14,19 +15,19 @@ type BoostrapConfig struct {
 	Log *zap.SugaredLogger
 }
 
-func Migrate(config *BoostrapConfig) bool {
+func MigrateMaster(config *BoostrapConfig) bool {
 
-	config.Log.Debug("Migrating schema to database")
+	config.Log.Debug("Migrating master data schema to database")
 
 	err := config.DB.AutoMigrate(
-		&entities.City{},
-		&entities.Religion{},
-		&entities.Gender{},
-		&entities.Faculty{},
-		&entities.Province{},
-		&entities.StudyProgram{},
-		&entities.Status{},
-		&entities.Country{},
+		&masterEntities.City{},
+		&masterEntities.Religion{},
+		&masterEntities.Gender{},
+		&masterEntities.Faculty{},
+		&masterEntities.Province{},
+		&masterEntities.StudyProgram{},
+		&masterEntities.Status{},
+		&masterEntities.Country{},
 	)
 
 	if err != nil {
@@ -40,13 +41,32 @@ func Migrate(config *BoostrapConfig) bool {
 
 }
 
+func MigrateAuth(config *BoostrapConfig) bool {
+	config.Log.Debug("Migrating auth data schema to database")
+
+	err := config.DB.AutoMigrate(
+		&authEntities.Permission{},
+	)
+
+	if err != nil {
+		config.Log.Panicf("Error occured during migrating schema: %s", err)
+		return false
+	}
+
+	config.Log.Debug("Schema migrated succesfully!")
+
+	return true
+}
+
 func Boostrap(config *BoostrapConfig) bool {
 	config.Log.Debug("Boostrapping protected routes")
 	routes.BoostrapMasterRoute(&routes.BoostrapConfig{App: config.App, Log: config.Log, DB: config.DB})
 	routes.BoostrapAuthRoute(&routes.BoostrapConfig{App: config.App, Log: config.Log, DB: config.DB})
 	config.Log.Debug("All protected routes is successfully boostraped")
-	migration_status := Migrate(config)
 
-	return migration_status
+	master_migration_status := MigrateMaster(config)
+	auth_migration_status := MigrateAuth(config)
+
+	return master_migration_status && auth_migration_status
 
 }
