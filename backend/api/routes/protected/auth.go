@@ -12,12 +12,12 @@ type AuthConfig struct {
 
 func (config *AuthConfig) SetupAuthRoute() {
 
-	group := config.App.Group("/auth/api")
+	group := config.App.Group("/api/auth")
 
 	group.Post("/permission", config.PermissionHandler.CreatePermissionHandler)
 	group.Get("/permissions", config.PermissionHandler.GetAllPermissionsHandler)
-	group.Get("/permission", config.PermissionHandler.GetPermissionByIdHandler)
+	group.Get("/permission/:id", config.PermissionHandler.GetPermissionByIdHandler)
 	group.Put("/permission/:id", config.PermissionHandler.UpdatePermissionHandler)
-	group.Delete("/permissions/:id", config.PermissionHandler.DeletePermissionHandler)
+	group.Delete("/permission/:id", config.PermissionHandler.DeletePermissionHandler)
 
 }
