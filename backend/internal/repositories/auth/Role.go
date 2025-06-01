@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/auth"
 	"go.uber.org/zap"
@@ -45,7 +46,7 @@ func (repository *RoleRepository) Create(ctx context.Context, roleEntity *entiti
 }
 
 func (repository *RoleRepository) GetAllRolesData(ctx context.Context, roleEntities *[]entities.Role) error {
-	if err := repository.DB.Find(roleEntities); err != nil {
+	if err := repository.DB.Preload("Permissions").Find(roleEntities); err != nil {
 		return err.Error
 	}
 
@@ -53,7 +54,7 @@ func (repository *RoleRepository) GetAllRolesData(ctx context.Context, roleEntit
 }
 
 func (repository *RoleRepository) GetRoleById(ctx context.Context, roleEntity *entities.Role, id string) error {
-	if err := repository.DB.Where("id = ?", id).Take(roleEntity); err != nil {
+	if err := repository.DB.Preload("Permissions").Where("id = ?", id).Take(roleEntity); err != nil {
 		return err.Error
 	}
 
@@ -70,8 +71,13 @@ func (repository *RoleRepository) Update(ctx context.Context, newRoleEntity *ent
 		}
 	}()
 
-	if err := repository.DB.Where("id = ?").Updates(newRoleEntity); err != nil {
+	if err := repository.DB.Where("id = ?", id).Updates(newRoleEntity); err != nil {
 		return err.Error
+	}
+
+	// Update association
+	if err := repository.DB.Association("Permissions").Replace(newRoleEntity.Permissions); err != nil {
+		return err
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -92,6 +98,11 @@ func (repository *RoleRepository) Delete(ctx context.Context, roleEntity *entiti
 			tx.Rollback()
 		}
 	}()
+
+	if err := repository.DB.Model(roleEntity).Association("Permissions").Clear(); err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
 
 	if err := repository.DB.Where("id = ?", id).Delete(roleEntity); err != nil {
 		return err.Error
