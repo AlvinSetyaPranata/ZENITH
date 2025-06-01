@@ -25,7 +25,7 @@ func (Presenter *RolePresenter) CreateRolePresenter(ctx *fiber.Ctx) (*models.Rol
 
 	roleCreationRequest := new(models.RoleModelRequest)
 
-	roleEntity, status, messege := Presenter.RoleService.CreateNewRoleData(ctx, roleCreationRequest)
+	roleEntity, permissions, status, messege := Presenter.RoleService.CreateNewRoleData(ctx, roleCreationRequest)
 
 	if status != 201 {
 		return nil, status, messege
@@ -34,6 +34,7 @@ func (Presenter *RolePresenter) CreateRolePresenter(ctx *fiber.Ctx) (*models.Rol
 	response := &models.RoleModelResponse{
 		Id:          roleEntity.Id,
 		Name:        roleEntity.Name,
+		Permissions: *permissions,
 		DateCreated: roleEntity.DateCreated,
 		DateUpdated: roleEntity.DateCreated,
 	}
@@ -50,7 +51,7 @@ func (Presenter *RolePresenter) GetAllRolesPresenter(ctx *fiber.Ctx) (*[]models.
 
 	response := make([]models.RoleModelResponse, 0, len(*roleEntity))
 
-	for _, role := range response {
+	for _, role := range *roleEntity {
 		response = append(response, models.RoleModelResponse{
 			Id:          role.Id,
 			Name:        role.Name,
@@ -83,7 +84,7 @@ func (Presenter *RolePresenter) UpdateRole(ctx *fiber.Ctx) (*models.RoleModelRes
 
 	roleRequest := new(models.RoleModelRequest)
 
-	roleEntity, status, messege := Presenter.RoleService.UpdateRoleData(ctx, roleRequest)
+	roleEntity, permissions, status, messege := Presenter.RoleService.UpdateRoleData(ctx, roleRequest)
 
 	if status != 200 {
 		return nil, status, messege
@@ -92,6 +93,7 @@ func (Presenter *RolePresenter) UpdateRole(ctx *fiber.Ctx) (*models.RoleModelRes
 	response := &models.RoleModelResponse{
 		Id:          roleEntity.Id,
 		Name:        roleEntity.Name,
+		Permissions: *permissions,
 		DateCreated: roleEntity.DateCreated,
 		DateUpdated: roleEntity.DateCreated,
 	}
@@ -100,8 +102,7 @@ func (Presenter *RolePresenter) UpdateRole(ctx *fiber.Ctx) (*models.RoleModelRes
 }
 
 func (Presenter *RolePresenter) DeleteRole(ctx *fiber.Ctx) (int, string) {
-	roleRequest := new(models.RoleModelRequest)
 
-	return Presenter.RoleService.DeleteRoleData(ctx, roleRequest)
+	return Presenter.RoleService.DeleteRoleData(ctx)
 
 }
