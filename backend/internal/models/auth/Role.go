@@ -7,11 +7,12 @@ import (
 )
 
 type RoleModelRequest struct {
-	Name string `json:"name" validate:"true"`
+	Name        string   `json:"name" validate:"true"`
+	Permissions []string `json:"permissions" validate:"true"`
 }
 
 type RoleModelResponse struct {
-	Id          string                `json:"id" validate:"true"`
+	Id          uint                  `json:"id" validate:"true"`
 	Name        string                `json:"name" validate:"true"`
 	Permissions []entities.Permission `json:"permissions" validate:"true"`
 	DateCreated time.Time             `json:"date_created" validate:"true"`
