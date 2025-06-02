@@ -90,6 +90,14 @@ func (repository *PermissionRepository) GetById(ctx context.Context, permissionE
 
 }
 
+func (repository *PermissionRepository) GetByName(ctx context.Context, permissionEntity *entities.Permission, name string) error {
+	if err := repository.DB.Where("name = ?", name).First(permissionEntity); err != nil {
+		return err.Error
+	}
+
+	return nil
+}
+
 func (repository *PermissionRepository) Update(ctx context.Context, newPermissionEntity *entities.Permission, id string) error {
 	tx := repository.DB.WithContext(ctx).Begin()
 	success := false
