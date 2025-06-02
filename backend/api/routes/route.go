@@ -6,6 +6,7 @@ import (
 	authPresenters "github.com/AlvinSetyaPranata/ZENITH/backend/api/presenters/auth"
 	masterPresenters "github.com/AlvinSetyaPranata/ZENITH/backend/api/presenters/master"
 	protectedRoute "github.com/AlvinSetyaPranata/ZENITH/backend/api/routes/protected"
+	publicRoute "github.com/AlvinSetyaPranata/ZENITH/backend/api/routes/public"
 	authRepository "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/auth"
 	masterRepository "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/master"
 	authServices "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/auth"
@@ -33,6 +34,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	studyProgramRepository := masterRepository.NewStudyProgRepository(config.DB, config.Log)
 	countryRepository := masterRepository.NewCountryRepository(config.DB, config.Log)
 	statusRepository := masterRepository.NewStatusRepository(config.DB, config.Log)
+	subjectTimeRepository := masterRepository.NewSubjectTimeRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all master data services")
@@ -45,6 +47,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	studyProgramService := masterService.NewStudyProgramService(studyProgramRepository, config.Log)
 	countryService := masterService.NewCountryService(countryRepository, config.Log)
 	statusService := masterService.NewStatusService(statusRepository, config.Log)
+	subjectTimeService := masterService.NewSubjectTimeService(subjectTimeRepository, config.Log)
 
 	// Presenters
 
@@ -57,6 +60,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	studyProgramPresenter := masterPresenters.NewStudyProgramPresenter(studyProgramService, config.Log)
 	countryPresenter := masterPresenters.NewCountryPresenter(countryService, config.Log)
 	statusPresenter := masterPresenters.NewStatusPresenter(statusService, config.Log)
+	subjectTimePresenter := masterPresenters.NewSubjectTimePresenter(subjectTimeService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all master data handlers")
@@ -68,10 +72,11 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	studyProgramHandler := masterHandler.NewStudyProgramHandler(studyProgramPresenter, config.Log)
 	countryHandler := masterHandler.NewCountryHandler(countryPresenter, config.Log)
 	statusHandler := masterHandler.NewStatusHandler(statusPresenter, config.Log)
+	subjectTimeHandler := masterHandler.NewSubjectTimeHandler(subjectTimePresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
-	route := protectedRoute.MasterConfig{
+	protectedRouteConfig := protectedRoute.MasterConfig{
 		App:                 config.App,
 		CityHandler:         cityHandler,
 		ReligionHandler:     religionHandler,
@@ -81,10 +86,11 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 		StudyProgramHandler: studyProgramHandler,
 		CountryHandler:      countryHandler,
 		StatusHandler:       statusHandler,
+		SubjectTimeHandler:  subjectTimeHandler,
 	}
 
 	config.Log.Debug("Setuping master data routers")
-	route.SetupMasterRoute()
+	protectedRouteConfig.SetupMasterRoute()
 	config.Log.Debug("Master data routers has been configured succesfully!")
 
 }
@@ -93,24 +99,41 @@ func BoostrapAuthRoute(config *BoostrapConfig) {
 	// Boostrap auth route
 
 	permissionRepository := authRepository.NewPermissionRepository(config.DB, config.Log)
+	roleRepository := authRepository.NewRoleRepository(config.DB, config.Log)
+	userRepository := authRepository.NewUserRepository(config.DB, config.Log)
 
 	// Boostrap auth services
 	permissionService := authServices.NewPermissionService(permissionRepository, config.Log)
+	roleService := authServices.NewRoleService(roleRepository, permissionRepository, config.Log)
+	userService := authServices.NewUserService(userRepository, roleRepository, config.Log)
 
 	// Boostrap auth presenters
 	permissionPresenter := authPresenters.NewPermissionPresenter(permissionService, config.Log)
+	rolePresenter := authPresenters.NewRolePresenter(roleService, config.Log)
+	userPresenter := authPresenters.NewUserPressenter(userService, config.Log)
 
-	// Boostrap auth presenters
+	// Boostrap auth handlers
 	permissionHandler := authHandler.NewPermissionHandler(permissionPresenter)
+	roleHandler := authHandler.NewRoleHandler(rolePresenter)
+	userHandler := authHandler.NewUserHandler(userPresenter)
 
 	config.Log.Debug("Auth route successfully boostrapped, yay!")
 
 	config.Log.Debug("Setting up, auth route")
-	route := protectedRoute.AuthConfig{
+	protectedRouteConfig := protectedRoute.AuthConfig{
 		App:               config.App,
 		PermissionHandler: permissionHandler,
+		RoleHandler:       roleHandler,
+		UserHandler:       userHandler,
 	}
-	route.SetupAuthRoute()
+
+	publicRouteConfig := publicRoute.PublicConfig{
+		App:         config.App,
+		UserHandler: userHandler,
+	}
+
+	protectedRouteConfig.SetupAuthRoute()
+	publicRouteConfig.SetupPublicRoute()
 	config.Log.Debug("Auth route successfully boostrapped, yay!")
 
 }
