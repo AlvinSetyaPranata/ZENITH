@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/AlvinSetyaPranata/ZENITH/backend/internal/config"
+	"github.com/spf13/viper"
 )
 
 const DEFAULT_PORT = "8000"
@@ -14,6 +15,14 @@ func main() {
 	db := config.NewDatabase(config.Log)
 
 	defer config.Log.Sync()
+
+	config.Log.Debug("Loading .env")
+	viper.SetConfigFile(".env")
+
+	if err := viper.ReadInConfig(); err != nil {
+		config.Log.Fatal("Failed to load .env")
+		return
+	}
 
 	config.Log.Debug("Boostrapping routers")
 	configuration_status := config.Boostrap(&config.BoostrapConfig{
