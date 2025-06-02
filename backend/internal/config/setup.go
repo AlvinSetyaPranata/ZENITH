@@ -28,6 +28,7 @@ func MigrateMaster(config *BoostrapConfig) bool {
 		&masterEntities.StudyProgram{},
 		&masterEntities.Status{},
 		&masterEntities.Country{},
+		&masterEntities.SubjectTime{},
 	)
 
 	if err != nil {
@@ -46,6 +47,8 @@ func MigrateAuth(config *BoostrapConfig) bool {
 
 	err := config.DB.AutoMigrate(
 		&authEntities.Permission{},
+		&authEntities.Role{},
+		&authEntities.User{},
 	)
 
 	if err != nil {
