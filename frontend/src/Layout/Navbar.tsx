@@ -3,7 +3,8 @@ import { Component } from 'solid-js';
 
 const Navbar: Component = () => {
   return (
-    <div class="navbar bg-amber-400 shadow-sm ">
+    <div class="navbar bg-base-300
+ shadow-sm ">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">daisyUI</a>
       </div>
