@@ -1,8 +1,13 @@
 import type { Component } from 'solid-js';
+import Navbar from './Layout/Navbar';
+import Sidebar from './Layout/Sidebar';
 
 const App: Component = () => {
   return (
-    <p class="text-4xl text-green-700 text-center py-20">Hello tailwind ayy!</p>
+    <div class=' bg-amber-50'>
+    <Navbar/>
+    <Sidebar/>
+    </div>
   );
 };
 
