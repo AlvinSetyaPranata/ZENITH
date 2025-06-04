@@ -12,12 +12,14 @@ import (
 
 type StudyProgramService struct {
 	StudyProgramRepository *repositories.StudyProgramRepository
+	FacultyRepository      *repositories.FacultyRepository
 	Log                    *zap.SugaredLogger
 }
 
-func NewStudyProgramService(studyProgramRepository *repositories.StudyProgramRepository, log *zap.SugaredLogger) *StudyProgramService {
+func NewStudyProgramService(studyProgramRepository *repositories.StudyProgramRepository, facultyRepository *repositories.FacultyRepository, log *zap.SugaredLogger) *StudyProgramService {
 	return &StudyProgramService{
 		StudyProgramRepository: studyProgramRepository,
+		FacultyRepository:      facultyRepository,
 		Log:                    log,
 	}
 }
@@ -30,9 +32,18 @@ func (Service *StudyProgramService) CreateStudyProgramData(ctx *fiber.Ctx, study
 		return nil, 400, "Invalid Request!"
 	}
 
+	// Get current faculty
+	facultyEntity := new(entities.Faculty)
+
+	if err := Service.FacultyRepository.GetById(ctx.UserContext(), facultyEntity, studyProgramRequest.Faculty); err != nil {
+		return nil, 404, "Faculty with given ID, is not found!"
+	}
+
 	studyProgramEntity := &entities.StudyProgram{
 		Name:        studyProgramRequest.Name,
+		Faculty:     facultyEntity,
 		DateCreated: time.Now(),
+		DateUpdated: time.Now(),
 	}
 
 	if err := Service.StudyProgramRepository.Create(ctx.UserContext(), studyProgramEntity); err != nil {
@@ -83,17 +94,32 @@ func (Service *StudyProgramService) UpdateStudyProgramData(ctx *fiber.Ctx, study
 		return nil, 400, "Invalid Request!"
 	}
 
+	// Get current study program entity
+
 	currentstudyProgramEntity := new(entities.StudyProgram)
 
 	if err := Service.StudyProgramRepository.GetById(ctx.UserContext(), currentstudyProgramEntity, id); err != nil {
 		return nil, 404, "StudyProgram with given ID, is not found!"
 	}
 
+	// Get the requested faculty entitiy
+
+	updatedFacultyEntity := new(entities.Faculty)
+	if err := Service.FacultyRepository.GetById(ctx.UserContext(), updatedFacultyEntity, studyProgramRequestModel.Faculty); err != nil {
+		return nil, 404, "Faculty with given ID, is not found!"
+	}
+
+	// Update study program entity
+
 	updatedstudyProgramEntity := &entities.StudyProgram{
 		Id:          currentstudyProgramEntity.Id,
 		Name:        studyProgramRequestModel.Name,
+		Faculty:     updatedFacultyEntity,
 		DateCreated: currentstudyProgramEntity.DateCreated,
+		DateUpdated: time.Now(),
 	}
+
+	// Update study program
 
 	if err := Service.StudyProgramRepository.Update(ctx.UserContext(), updatedstudyProgramEntity, id); err != nil {
 		return nil, 500, err.Error()
@@ -111,6 +137,10 @@ func (Service *StudyProgramService) DeleteStudyProgramData(ctx *fiber.Ctx) (int,
 	}
 
 	studyProgramEntity := new(entities.StudyProgram)
+
+	if err := Service.StudyProgramRepository.GetById(ctx.UserContext(), studyProgramEntity, id); err != nil {
+		return 404, "Study Program with given id is not found"
+	}
 
 	if err := Service.StudyProgramRepository.Delete(ctx.UserContext(), studyProgramEntity, id); err != nil {
 		return 500, err.Error()

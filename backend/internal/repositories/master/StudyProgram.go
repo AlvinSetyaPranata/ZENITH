@@ -54,7 +54,7 @@ func (repository *StudyProgramRepository) GetAll(ctx context.Context, entities *
 		}
 	}()
 
-	if err := repository.DB.Find(entities).Error; err != nil {
+	if err := repository.DB.Preload("Faculty").Find(entities).Error; err != nil {
 		return err
 	}
 
@@ -72,7 +72,7 @@ func (repository *StudyProgramRepository) GetById(ctx context.Context, entity *e
 		}
 	}()
 
-	if err := repository.DB.Where("id = ?", id).Take(entity).Error; err != nil {
+	if err := repository.DB.Preload("Faculty").Where("id = ?", id).Take(entity).Error; err != nil {
 		return err
 	}
 
@@ -95,6 +95,11 @@ func (repository *StudyProgramRepository) Update(ctx context.Context, updatedEnt
 		return err
 	}
 
+	// Update association
+	if err := repository.DB.Model(updatedEntity).Association("Faculty").Replace(updatedEntity.Faculty); err != nil {
+		return err
+	}
+
 	if err := tx.Commit().Error; err != nil {
 		return err
 	}
@@ -113,6 +118,10 @@ func (repository *StudyProgramRepository) Delete(ctx context.Context, entityToDe
 			tx.Rollback()
 		}
 	}()
+
+	if err := repository.DB.Model(entityToDelete).Association("Faculty").Clear(); err != nil {
+		return err
+	}
 
 	if err := repository.DB.Where("id = ?", id).Delete(entityToDelete); err != nil {
 		return err.Error

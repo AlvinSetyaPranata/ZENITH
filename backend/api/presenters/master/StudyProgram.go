@@ -31,10 +31,18 @@ func (Presenter *StudyProgramPresenter) CreateStudyProgramPresenter(ctx *fiber.C
 		return nil, status, messege
 	}
 
+	facultyResponse := &models.FacultyResponseModel{
+		Id:          newStudyProgramEntity.Faculty.Id,
+		Name:        newStudyProgramEntity.Faculty.Name,
+		DateCreated: newStudyProgramEntity.Faculty.DateCreated,
+	}
+
 	response := &models.StudyProgramResponseModel{
 		Id:          newStudyProgramEntity.Id,
 		Name:        newStudyProgramEntity.Name,
+		Faculty:     facultyResponse,
 		DateCreated: newStudyProgramEntity.DateCreated,
+		DateUpdated: newStudyProgramEntity.DateUpdated,
 	}
 
 	return response, status, messege
@@ -51,10 +59,17 @@ func (Presenter *StudyProgramPresenter) GetAllStudyProgramsData(ctx *fiber.Ctx) 
 	response := make([]models.StudyProgramResponseModel, 0, len(*studyProgramsEntity))
 
 	for _, StudyProgram := range *studyProgramsEntity {
+
 		response = append(response, models.StudyProgramResponseModel{
-			Id:          StudyProgram.Id,
-			Name:        StudyProgram.Name,
+			Id:   StudyProgram.Id,
+			Name: StudyProgram.Name,
+			Faculty: &models.FacultyResponseModel{
+				Id:          StudyProgram.Faculty.Id,
+				Name:        StudyProgram.Faculty.Name,
+				DateCreated: StudyProgram.Faculty.DateCreated,
+			},
 			DateCreated: StudyProgram.DateCreated,
+			DateUpdated: StudyProgram.DateUpdated,
 		})
 	}
 
@@ -70,9 +85,15 @@ func (Presenter *StudyProgramPresenter) GetStudyProgramDataById(ctx *fiber.Ctx) 
 	}
 
 	response := &models.StudyProgramResponseModel{
-		Id:          StudyProgramEntity.Id,
-		Name:        StudyProgramEntity.Name,
+		Id:   StudyProgramEntity.Id,
+		Name: StudyProgramEntity.Name,
+		Faculty: &models.FacultyResponseModel{
+			Id:          StudyProgramEntity.Faculty.Id,
+			Name:        StudyProgramEntity.Faculty.Name,
+			DateCreated: StudyProgramEntity.Faculty.DateCreated,
+		},
 		DateCreated: StudyProgramEntity.DateCreated,
+		DateUpdated: StudyProgramEntity.DateUpdated,
 	}
 
 	return response, status, messege
@@ -89,9 +110,15 @@ func (Presenter *StudyProgramPresenter) UpdateStudyProgramData(ctx *fiber.Ctx) (
 	}
 
 	response := &models.StudyProgramResponseModel{
-		Id:          updatedStudyProgramData.Id,
-		Name:        updatedStudyProgramData.Name,
+		Id:   updatedStudyProgramData.Id,
+		Name: updatedStudyProgramData.Name,
+		Faculty: &models.FacultyResponseModel{
+			Id:          updatedStudyProgramData.Faculty.Id,
+			Name:        updatedStudyProgramData.Faculty.Name,
+			DateCreated: updatedStudyProgramData.Faculty.DateCreated,
+		},
 		DateCreated: updatedStudyProgramData.DateCreated,
+		DateUpdated: updatedStudyProgramData.DateUpdated,
 	}
 
 	return response, status, messege
