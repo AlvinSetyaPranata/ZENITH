@@ -44,7 +44,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	genderService := masterService.NewGenderService(genderRepisotory, config.Log)
 	facultyService := masterService.NewFacultyService(facultyRepository, config.Log)
 	provinceService := masterService.NewProvinceService(provinceRepository, config.Log)
-	studyProgramService := masterService.NewStudyProgramService(studyProgramRepository, config.Log)
+	studyProgramService := masterService.NewStudyProgramService(studyProgramRepository, facultyRepository, config.Log)
 	countryService := masterService.NewCountryService(countryRepository, config.Log)
 	statusService := masterService.NewStatusService(statusRepository, config.Log)
 	subjectTimeService := masterService.NewSubjectTimeService(subjectTimeRepository, config.Log)
