@@ -1,16 +1,6 @@
-import type { Component } from 'solid-js';
-import Navbar from './Layout/Navbar';
-import Sidebar from './Layout/Sidebar';
+import { Router } from '@solidjs/router';
+import routes from './routes';
 
-const App: Component = () => {
-  return (
-    <div class='max-w-full  bg-base-100'>
-     <Navbar/>
-      <Sidebar/>
-    
-   
-    </div>
-  );
-};
-
-export default App;
+export default function App() {
+  return <Router routes={routes} />;
+}
