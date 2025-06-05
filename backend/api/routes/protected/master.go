@@ -18,6 +18,7 @@ type MasterConfig struct {
 	StatusHandler       *handlers.StatusHandler
 	SubjectTimeHandler  *handlers.SubjectTimeHandler
 	LectureHandler      *handlers.LectureHandler
+	StudentHandler      *handlers.StudentHandler
 }
 
 func (r *MasterConfig) SetupMasterRoute() {
@@ -93,4 +94,11 @@ func (r *MasterConfig) SetupMasterRoute() {
 	protected.Post("/lecturer", r.LectureHandler.CreateLectureHandler)
 	protected.Put("/lecturer/:id", r.LectureHandler.UpdateLectureHandler)
 	protected.Delete("/lecturer/:id", r.LectureHandler.DeleteLecture)
+
+	// Student section route
+	protected.Get("/students", r.StudentHandler.GetAllStudentHandler)
+	protected.Get("/student/:id", r.StudentHandler.GetStudentByIdHandler)
+	protected.Post("/student", r.StudentHandler.CreateStudentHandler)
+	protected.Put("/student/:id", r.StudentHandler.UpdateStudentHandler)
+	protected.Delete("/student/:id", r.StudentHandler.DeleteStudent)
 }

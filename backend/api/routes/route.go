@@ -36,6 +36,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	statusRepository := masterRepository.NewStatusRepository(config.DB, config.Log)
 	subjectTimeRepository := masterRepository.NewSubjectTimeRepository(config.DB, config.Log)
 	lectureRepository := masterRepository.NewLectureRepository(config.DB)
+	studentRepository := masterRepository.NewStudentRepository(config.DB)
 
 	// Services
 	config.Log.Debug("Boostraping all master data services")
@@ -50,6 +51,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	statusService := masterService.NewStatusService(statusRepository, config.Log)
 	subjectTimeService := masterService.NewSubjectTimeService(subjectTimeRepository, config.Log)
 	lectureService := masterService.NewLectureService(lectureRepository, config.Log)
+	studentService := masterService.NewStudentService(studentRepository, config.Log)
 
 	// Presenters
 
@@ -64,6 +66,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	statusPresenter := masterPresenters.NewStatusPresenter(statusService, config.Log)
 	subjectTimePresenter := masterPresenters.NewSubjectTimePresenter(subjectTimeService, config.Log)
 	lecturePresenter := masterPresenters.NewLecturePresenter(lectureService)
+	studentPresenter := masterPresenters.NewStudentPresenter(studentService)
 
 	// Handlers
 	config.Log.Debug("Boostraping all master data handlers")
@@ -77,6 +80,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	statusHandler := masterHandler.NewStatusHandler(statusPresenter, config.Log)
 	subjectTimeHandler := masterHandler.NewSubjectTimeHandler(subjectTimePresenter, config.Log)
 	lectureHandler := masterHandler.NewLectureHandler(lecturePresenter)
+	studentHandler := masterHandler.NewStudentHandler(studentPresenter)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -92,6 +96,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 		StatusHandler:       statusHandler,
 		SubjectTimeHandler:  subjectTimeHandler,
 		LectureHandler:      lectureHandler,
+		StudentHandler:      studentHandler,
 	}
 
 	config.Log.Debug("Setuping master data routers")
