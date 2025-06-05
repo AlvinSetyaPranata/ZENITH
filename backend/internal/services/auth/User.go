@@ -8,7 +8,8 @@ import (
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/auth"
 	models "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/auth"
 	repositories "github.com/AlvinSetyaPranata/ZENITH/backend/internal/repositories/auth"
-	utils "github.com/AlvinSetyaPranata/ZENITH/backend/utils/auth"
+	utils "github.com/AlvinSetyaPranata/ZENITH/backend/utils"
+	authUtils "github.com/AlvinSetyaPranata/ZENITH/backend/utils/auth"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -35,7 +36,7 @@ func (Service *UserService) CreateUser(ctx *fiber.Ctx, userRequestModel *models.
 		return nil, 400, "Invlaid Request!"
 	}
 
-	hashedPassword, err := utils.HashPassword(userRequestModel.Password)
+	hashedPassword, err := authUtils.HashPassword(userRequestModel.Password)
 
 	if err != nil {
 		return nil, 400, "Invalid Request!"
@@ -59,7 +60,24 @@ func (Service *UserService) CreateUser(ctx *fiber.Ctx, userRequestModel *models.
 		DateUpdated: timeNow,
 	}
 
+	// Check if there is user with given role already
+
+	userWithRole := new(entities.User)
+
+	if err := Service.UserRepository.GetUserByRole(ctx.UserContext(), userWithRole, roleId); err != nil {
+		if errType := utils.HandlerError(err); errType != 404 {
+			return nil, 500, err.Error()
+		}
+	}
+
+	if userWithRole.Id != 0 && authUtils.CheckRoleCannotDuplicate(currentRole.Name) {
+		return nil, 404, "User with following role, is already registered!"
+	}
+
 	if err := Service.UserRepository.Create(ctx.UserContext(), userEntity); err != nil {
+		if errType := utils.HandlerError(err); errType == 409 {
+			return nil, 409, "User with given email is already registered!"
+		}
 		return nil, 500, err.Error()
 	}
 
@@ -90,6 +108,11 @@ func (Service *UserService) GetUserById(ctx *fiber.Ctx) (*entities.User, int, st
 	userEntity := new(entities.User)
 
 	if err := Service.UserRepository.GetUserById(ctx.UserContext(), userEntity, id); err != nil {
+
+		if errType := utils.HandlerError(err); errType == 404 {
+			return nil, 404, "User with given id is not exists!"
+		}
+
 		return nil, 500, err.Error()
 	}
 
@@ -107,7 +130,7 @@ func (Service *UserService) UpdateUser(ctx *fiber.Ctx, userDataRequest *models.U
 		return nil, 400, "Invalid Request!"
 	}
 
-	hashedPassword, err := utils.HashPassword(userDataRequest.Password)
+	hashedPassword, err := authUtils.HashPassword(userDataRequest.Password)
 
 	if err != nil {
 		return nil, 500, err.Error()
@@ -159,13 +182,13 @@ func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *mode
 
 	// Check credentials
 
-	if status := utils.CheckPassword(loginRequestModel.Password, currentUser.Password); !status {
+	if status := authUtils.CheckPassword(loginRequestModel.Password, currentUser.Password); !status {
 		return nil, "", "", 401, "Username or Password is incorrect!"
 	}
 
 	userID := strconv.FormatUint(uint64(currentUser.Id), 10)
 
-	access_token, refresh_token := utils.GenerateToken(userID, currentUser.Role.Name)
+	access_token, refresh_token := authUtils.GenerateToken(userID, currentUser.Role.Name)
 
 	if access_token == "" || refresh_token == "" {
 		return nil, "", "", 500, "Internal Server Error!"
