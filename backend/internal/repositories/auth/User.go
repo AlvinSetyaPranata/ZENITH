@@ -48,7 +48,7 @@ func (repository *UserRepository) Create(ctx context.Context, userEntity *entiti
 
 func (repository *UserRepository) GetAllUser(ctx context.Context, userEntites *[]entities.User) error {
 
-	if err := repository.DB.Preload("Role").Preload("Role.Permissions").Find(userEntites); err != nil {
+	if err := repository.DB.Preload("Role").Find(userEntites); err != nil {
 		return err.Error
 	}
 
@@ -58,7 +58,7 @@ func (repository *UserRepository) GetAllUser(ctx context.Context, userEntites *[
 
 func (repository *UserRepository) GetUserById(ctx context.Context, userEntity *entities.User, id string) error {
 
-	if err := repository.DB.Preload("Role").Preload("Role.Permissions").Where("id = ?", id).Take(userEntity); err != nil {
+	if err := repository.DB.Preload("Role").Where("id = ?", id).Take(userEntity); err != nil {
 		return err.Error
 	}
 
@@ -67,7 +67,17 @@ func (repository *UserRepository) GetUserById(ctx context.Context, userEntity *e
 
 func (repository *UserRepository) GetUserByEmail(ctx context.Context, userEntity *entities.User, email string) error {
 
-	if err := repository.DB.Preload("Role").Preload("Role.Permissions").Where("email = ?", email).Take(userEntity); err != nil {
+	if err := repository.DB.Preload("Role").Where("email = ?", email).Take(userEntity); err != nil {
+		return err.Error
+	}
+
+	return nil
+
+}
+
+func (repository *UserRepository) GetUserByRole(ctx context.Context, userEntity *entities.User, role string) error {
+
+	if err := repository.DB.Preload("Role").Where("role_id = ?", role).Take(userEntity); err != nil {
 		return err.Error
 	}
 
@@ -84,6 +94,10 @@ func (repository *UserRepository) Update(ctx context.Context, newUserEntity *ent
 			tx.Rollback()
 		}
 	}()
+
+	if err := repository.DB.Model(newUserEntity).Association("Role").Replace(newUserEntity.Role); err != nil {
+		return err
+	}
 
 	if err := repository.DB.Where("id = ?", id).Updates(newUserEntity); err != nil {
 		return err.Error
@@ -107,6 +121,10 @@ func (repository *UserRepository) Delete(ctx context.Context, userEntity *entiti
 			tx.Rollback()
 		}
 	}()
+
+	if err := repository.DB.Model(userEntity).Association("Role").Clear(); err != nil {
+		return err
+	}
 
 	if err := repository.DB.Where("id = ?", id).Delete(userEntity); err != nil {
 		return err.Error
