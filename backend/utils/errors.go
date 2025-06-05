@@ -8,6 +8,7 @@ import (
 )
 
 func HandlerError(err error) int {
+
 	switch {
 	case errors.Is(err, gorm.ErrDuplicatedKey):
 		return fiber.StatusConflict
