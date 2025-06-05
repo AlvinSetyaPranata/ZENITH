@@ -35,6 +35,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	countryRepository := masterRepository.NewCountryRepository(config.DB, config.Log)
 	statusRepository := masterRepository.NewStatusRepository(config.DB, config.Log)
 	subjectTimeRepository := masterRepository.NewSubjectTimeRepository(config.DB, config.Log)
+	lectureRepository := masterRepository.NewLectureRepository(config.DB)
 
 	// Services
 	config.Log.Debug("Boostraping all master data services")
@@ -48,6 +49,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	countryService := masterService.NewCountryService(countryRepository, config.Log)
 	statusService := masterService.NewStatusService(statusRepository, config.Log)
 	subjectTimeService := masterService.NewSubjectTimeService(subjectTimeRepository, config.Log)
+	lectureService := masterService.NewLectureService(lectureRepository, config.Log)
 
 	// Presenters
 
@@ -61,6 +63,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	countryPresenter := masterPresenters.NewCountryPresenter(countryService, config.Log)
 	statusPresenter := masterPresenters.NewStatusPresenter(statusService, config.Log)
 	subjectTimePresenter := masterPresenters.NewSubjectTimePresenter(subjectTimeService, config.Log)
+	lecturePresenter := masterPresenters.NewLecturePresenter(lectureService)
 
 	// Handlers
 	config.Log.Debug("Boostraping all master data handlers")
@@ -73,6 +76,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	countryHandler := masterHandler.NewCountryHandler(countryPresenter, config.Log)
 	statusHandler := masterHandler.NewStatusHandler(statusPresenter, config.Log)
 	subjectTimeHandler := masterHandler.NewSubjectTimeHandler(subjectTimePresenter, config.Log)
+	lectureHandler := masterHandler.NewLectureHandler(lecturePresenter)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -87,6 +91,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 		CountryHandler:      countryHandler,
 		StatusHandler:       statusHandler,
 		SubjectTimeHandler:  subjectTimeHandler,
+		LectureHandler:      lectureHandler,
 	}
 
 	config.Log.Debug("Setuping master data routers")
