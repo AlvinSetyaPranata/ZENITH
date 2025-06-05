@@ -1,8 +1,6 @@
 package master
 
 import (
-	"fmt"
-
 	authModels "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/auth"
 	models "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	services "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/master"
@@ -30,8 +28,6 @@ func (Presenter *LecturePresenter) CreateLecturePresenter(ctx *fiber.Ctx) (*mode
 	if status != 201 {
 		return nil, status, messege
 	}
-
-	fmt.Println(lectureEntity)
 
 	response := &models.LectureResponseModel{
 		Nidn:    lectureEntity.Nidn,
