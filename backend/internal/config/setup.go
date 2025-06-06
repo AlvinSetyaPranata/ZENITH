@@ -31,6 +31,7 @@ func MigrateMaster(config *BoostrapConfig) bool {
 		&masterEntities.SubjectTime{},
 		&masterEntities.Lecture{},
 		&masterEntities.Student{},
+		&masterEntities.Staff{},
 	)
 
 	if err != nil {
