@@ -45,48 +45,20 @@ func (Repository *SubjectTimeRepository) Create(ctx context.Context, subjectTime
 }
 
 func (Repository *SubjectTimeRepository) GetAll(ctx context.Context, subjectTimeEntities *[]entities.SubjectTime) error {
-	tx := Repository.DB.WithContext(ctx).Begin()
-	success := false
-
-	defer func() {
-		if !success {
-			tx.Rollback()
-		}
-	}()
-
 	if err := Repository.DB.Find(subjectTimeEntities); err != nil {
 		return err.Error
 	}
-
-	if err := tx.Commit(); err != nil {
-		return err.Error
-	}
-
-	success = true
 
 	return nil
 
 }
 
 func (repository *SubjectTimeRepository) GetById(ctx context.Context, subjectTimeEntity *entities.SubjectTime, id string) error {
-	tx := repository.DB.WithContext(ctx).Begin()
-	success := false
-
-	defer func() {
-		if !success {
-			tx.Rollback()
-		}
-	}()
 
 	if err := repository.DB.Where("id = ?", id).Take(subjectTimeEntity); err != nil {
 		return err.Error
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err.Error
-	}
-
-	success = true
 	return nil
 
 }
