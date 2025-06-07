@@ -41,6 +41,7 @@ func (repository *RoleRepository) Create(ctx context.Context, roleEntity *entiti
 		return err.Error
 	}
 
+	success = true
 	return nil
 
 }
