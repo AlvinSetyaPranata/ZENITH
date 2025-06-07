@@ -37,6 +37,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	subjectTimeRepository := masterRepository.NewSubjectTimeRepository(config.DB, config.Log)
 	lectureRepository := masterRepository.NewLectureRepository(config.DB)
 	studentRepository := masterRepository.NewStudentRepository(config.DB)
+	subjectRepository := masterRepository.NewSubjectRepository(config.DB)
 
 	// Services
 	config.Log.Debug("Boostraping all master data services")
@@ -52,6 +53,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	subjectTimeService := masterService.NewSubjectTimeService(subjectTimeRepository, config.Log)
 	lectureService := masterService.NewLectureService(lectureRepository, config.Log)
 	studentService := masterService.NewStudentService(studentRepository, config.Log)
+	subjectService := masterService.NewSubjectService(subjectRepository)
 
 	// Presenters
 
@@ -67,6 +69,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	subjectTimePresenter := masterPresenters.NewSubjectTimePresenter(subjectTimeService, config.Log)
 	lecturePresenter := masterPresenters.NewLecturePresenter(lectureService)
 	studentPresenter := masterPresenters.NewStudentPresenter(studentService)
+	subjectPresenter := masterPresenters.NewSubjectPresenter(subjectService)
 
 	// Handlers
 	config.Log.Debug("Boostraping all master data handlers")
@@ -81,6 +84,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	subjectTimeHandler := masterHandler.NewSubjectTimeHandler(subjectTimePresenter, config.Log)
 	lectureHandler := masterHandler.NewLectureHandler(lecturePresenter)
 	studentHandler := masterHandler.NewStudentHandler(studentPresenter)
+	subjectHandler := masterHandler.NewSubjectHandler(subjectPresenter)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -97,6 +101,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 		SubjectTimeHandler:  subjectTimeHandler,
 		LectureHandler:      lectureHandler,
 		StudentHandler:      studentHandler,
+		SubjectHandler:      subjectHandler,
 	}
 
 	config.Log.Debug("Setuping master data routers")
