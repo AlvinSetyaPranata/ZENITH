@@ -1,15 +1,16 @@
-import type { Component } from 'solid-js';
-import Navbar from './Layout/Navbar';
-import Sidebar from './Layout/Sidebar';
+import { Router, Route } from "@solidjs/router";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import MainLayout from "./layout/MainLayout";
+import AuthLayout from "./layout/AuthLayout";
+import type { Component } from "solid-js";
 
 const App: Component = () => {
   return (
-    <div class='max-w-full  bg-base-100'>
-     <Navbar/>
-      <Sidebar/>
-    
-   
-    </div>
+    <Router>
+      <Route path="/Dashboard" component={() => <MainLayout><Dashboard /></MainLayout>} />
+      <Route path="/login" component={() => <AuthLayout><Login /></AuthLayout>} />
+    </Router>
   );
 };
 
