@@ -3,7 +3,7 @@ import { Component } from "solid-js";
 
 const Sidebar: Component = () => {
   return (
-   <div  class="menu bg-black min-h-screen w-50">
+   <div  class="menu bg-black h-[90vh] w-50">
     <h2 class="font-extrabold text-xl ml-12">ZENITH</h2>
    
     

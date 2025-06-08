@@ -2,12 +2,18 @@
 import { from, JSX } from "solid-js";
 import Sidebar from "../components/Sidebar";
 import "../index.css";
+import Navbar from "../components/Navbar";
 
 export default function MainLayout(props: { children: JSX.Element }) {
   return (
-    <div>
+    <div class="flex">
         <Sidebar/>
-      <main class="p-4">{props.children}</main>
+       
+      <main class="flex-1 ">
+         <Navbar/>
+         {props.children}
+        </main>
+
     </div>
   );
 }

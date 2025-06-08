@@ -1,4 +1,3 @@
-// src/layouts/AuthLayout.tsx
 import { JSX } from "solid-js";
 import "../index.css";
 

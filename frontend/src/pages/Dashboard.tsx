@@ -2,8 +2,8 @@ export default function Dashboard() {
   
 
   return (
-    <div>
-      
+    <div class="p-4">
+      <p>Helo </p>
       
     </div>
   );
