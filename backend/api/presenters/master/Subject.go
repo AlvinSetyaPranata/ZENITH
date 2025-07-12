@@ -1,8 +1,6 @@
 package master
 
 import (
-	"fmt"
-
 	models "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	services "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/master"
 	"github.com/gofiber/fiber/v2"
@@ -30,12 +28,11 @@ func (Presenter *SubjectPresenter) CreateSubjectPresenter(ctx *fiber.Ctx) (*mode
 		return nil, status, messege
 	}
 
-	fmt.Println(subjectEntity)
-
 	response := &models.SubjectResponseModel{
-		Id:      subjectEntity.Id,
-		Name:    subjectEntity.Name,
-		Lecture: subjectEntity.LectureId,
+		Id:          subjectEntity.Id,
+		Name:        subjectEntity.Name,
+		Lecture:     subjectEntity.LectureId,
+		SubjectTime: subjectEntity.SubjectTimeId,
 	}
 
 	return response, status, messege
@@ -53,9 +50,10 @@ func (Presenter *SubjectPresenter) GetAllSubjectPresenter(ctx *fiber.Ctx) (*[]mo
 
 	for _, subject := range *subjectEntities {
 		response = append(response, models.SubjectResponseModel{
-			Id:      subject.Id,
-			Name:    subject.Name,
-			Lecture: subject.LectureId,
+			Id:          subject.Id,
+			Name:        subject.Name,
+			Lecture:     subject.LectureId,
+			SubjectTime: subject.SubjectTimeId,
 		})
 	}
 
@@ -71,9 +69,10 @@ func (Presenter *SubjectPresenter) GetSubjectByIdPresenter(ctx *fiber.Ctx) (*mod
 	}
 
 	response := &models.SubjectResponseModel{
-		Id:      subjectEntity.Id,
-		Name:    subjectEntity.Name,
-		Lecture: subjectEntity.LectureId,
+		Id:          subjectEntity.Id,
+		Name:        subjectEntity.Name,
+		Lecture:     subjectEntity.LectureId,
+		SubjectTime: subjectEntity.SubjectTimeId,
 	}
 
 	return response, status, messege
@@ -89,9 +88,10 @@ func (Presenter *SubjectPresenter) UpdateSubjectPresenter(ctx *fiber.Ctx) (*mode
 	}
 
 	response := &models.SubjectResponseModel{
-		Id:      subjectEntity.Id,
-		Name:    subjectEntity.Name,
-		Lecture: subjectEntity.LectureId,
+		Id:          subjectEntity.Id,
+		Name:        subjectEntity.Name,
+		Lecture:     subjectEntity.LectureId,
+		SubjectTime: subjectEntity.SubjectTimeId,
 	}
 
 	return response, status, messege

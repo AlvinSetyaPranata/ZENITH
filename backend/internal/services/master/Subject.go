@@ -31,10 +31,11 @@ func (Service *SubjectService) CreateSubjectService(ctx *fiber.Ctx, subjectReque
 	// Create new subject entity and passed into repository
 
 	newSubjectEntity := &entities.Subject{
-		Name:        subjectRequestModel.Name,
-		LectureId:   subjectRequestModel.Lecture,
-		DateCreated: time.Now(),
-		DateUpdated: time.Now(),
+		Name:          subjectRequestModel.Name,
+		LectureId:     subjectRequestModel.Lecture,
+		SubjectTimeId: subjectRequestModel.SubjectTime,
+		DateCreated:   time.Now(),
+		DateUpdated:   time.Now(),
 	}
 
 	if err := Service.SubjectRepository.Create(ctx.UserContext(), newSubjectEntity); err != nil {
@@ -93,11 +94,12 @@ func (Service *SubjectService) UpdateSubjectService(ctx *fiber.Ctx, subjectReque
 	}
 
 	newSubjectEntity := &entities.Subject{
-		Id:          currentSubjectEntity.Id,
-		Name:        subjectRequetModel.Name,
-		LectureId:   subjectRequetModel.Lecture,
-		DateCreated: currentSubjectEntity.DateCreated,
-		DateUpdated: time.Now(),
+		Id:            currentSubjectEntity.Id,
+		Name:          subjectRequetModel.Name,
+		LectureId:     subjectRequetModel.Lecture,
+		SubjectTimeId: subjectRequetModel.SubjectTime,
+		DateCreated:   currentSubjectEntity.DateCreated,
+		DateUpdated:   time.Now(),
 	}
 
 	if err := Service.SubjectRepository.Update(ctx.UserContext(), newSubjectEntity, id); err != nil {

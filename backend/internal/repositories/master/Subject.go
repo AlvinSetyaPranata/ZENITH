@@ -44,7 +44,7 @@ func (Repository *SubjectRepository) Create(ctx context.Context, subjectEntity *
 
 func (Repository *SubjectRepository) GetAll(ctx context.Context, subjectEntities *[]entities.Subject) error {
 
-	if err := Repository.DB.Preload("Lecture").Find(subjectEntities); err != nil {
+	if err := Repository.DB.Preload("Lecture").Preload("SubjectTime").Find(subjectEntities); err != nil {
 		return err.Error
 	}
 
@@ -54,7 +54,7 @@ func (Repository *SubjectRepository) GetAll(ctx context.Context, subjectEntities
 
 func (Repository *SubjectRepository) GetById(ctx context.Context, subjectEntity *entities.Subject, id string) error {
 
-	if err := Repository.DB.Preload("Lecture").Where("id = ?", id).Take(subjectEntity); err != nil {
+	if err := Repository.DB.Preload("Lecture").Preload("SubjectTime").Where("id = ?", id).Take(subjectEntity); err != nil {
 		return err.Error
 	}
 
