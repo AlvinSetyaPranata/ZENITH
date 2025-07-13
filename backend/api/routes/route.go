@@ -38,6 +38,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	lectureRepository := masterRepository.NewLectureRepository(config.DB)
 	studentRepository := masterRepository.NewStudentRepository(config.DB)
 	subjectRepository := masterRepository.NewSubjectRepository(config.DB)
+	batchRepository := masterRepository.NewBatchRepository(config.DB, config.Log)
 
 	// Services
 	config.Log.Debug("Boostraping all master data services")
@@ -54,6 +55,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	lectureService := masterService.NewLectureService(lectureRepository, config.Log)
 	studentService := masterService.NewStudentService(studentRepository, config.Log)
 	subjectService := masterService.NewSubjectService(subjectRepository)
+	batchService := masterService.NewBatchService(batchRepository, config.Log)
 
 	// Presenters
 
@@ -70,6 +72,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	lecturePresenter := masterPresenters.NewLecturePresenter(lectureService)
 	studentPresenter := masterPresenters.NewStudentPresenter(studentService)
 	subjectPresenter := masterPresenters.NewSubjectPresenter(subjectService)
+	batchPresenter := masterPresenters.NewBatchPresenter(batchService, config.Log)
 
 	// Handlers
 	config.Log.Debug("Boostraping all master data handlers")
@@ -85,6 +88,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 	lectureHandler := masterHandler.NewLectureHandler(lecturePresenter)
 	studentHandler := masterHandler.NewStudentHandler(studentPresenter)
 	subjectHandler := masterHandler.NewSubjectHandler(subjectPresenter)
+	batchHandler := masterHandler.NewBatchHandler(batchPresenter, config.Log)
 
 	config.Log.Debug("So far, no problem, good!")
 
@@ -102,6 +106,7 @@ func BoostrapMasterRoute(config *BoostrapConfig) {
 		LectureHandler:      lectureHandler,
 		StudentHandler:      studentHandler,
 		SubjectHandler:      subjectHandler,
+		BatchHandler:        batchHandler,
 	}
 
 	config.Log.Debug("Setuping master data routers")

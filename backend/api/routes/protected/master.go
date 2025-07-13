@@ -21,6 +21,7 @@ type MasterConfig struct {
 	StudentHandler      *handlers.StudentHandler
 	StaffHandler        *handlers.StaffHandler
 	SubjectHandler      *handlers.SubjectHandler
+	BatchHandler        *handlers.BatchHandler
 }
 
 func (r *MasterConfig) SetupMasterRoute() {
@@ -117,4 +118,11 @@ func (r *MasterConfig) SetupMasterRoute() {
 	protected.Post("/subject", r.SubjectHandler.CreateSubjectHandler)
 	protected.Put("/subject/:id", r.SubjectHandler.UpdateSubjectHandler)
 	protected.Delete("/subject/:id", r.SubjectHandler.DeleteSubject)
+
+	// Batch section route
+	protected.Get("/batches", r.BatchHandler.GetAllBatchHandler)
+	protected.Get("/batch/:id", r.BatchHandler.GetBatchByIdHandler)
+	protected.Post("/batch", r.BatchHandler.CreateBatchHandler)
+	protected.Put("/batch/:id", r.BatchHandler.UpdateBatchHandler)
+	protected.Delete("/batch/:id", r.BatchHandler.DeleteBatch)
 }
