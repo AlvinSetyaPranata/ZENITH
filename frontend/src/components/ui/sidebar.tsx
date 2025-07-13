@@ -1,27 +1,24 @@
-import { children, ParentProps } from "solid-js"
+import { ParentProps } from "solid-js";
 
-interface SidebarComponentProps extends ParentProps {
-    title: string,
-    logoHref: string
+interface SidebarProps extends ParentProps {
+    isOpened: () => boolean,
+    institutionName?: string,
+    institutionLogoHref?: string,
 }
 
-
-
-export default function Sidebar({ title, logoHref, children } : SidebarComponentProps) {
-    return (
-        <div class="min-h-screen min-w-max w-[25%] bg-stone-950 text-white py-6 px-4">
-            {/* logo section */}
-            <div class="flex flex-col items-center gap-y-4">
-                <img src={logoHref} alt="logo" class="w-[100px]" />
-                <p class="font-semibold text-lg text-center">{title}</p>
-            </div>
-            {/* logo section */}
-
-            {/* navigation section */}
-            <div class="mt-16">
-                {children}
-            </div>
-            {/* navigation section */}
+export default function Sidebar({ isOpened, institutionName, institutionLogoHref, children} : SidebarProps) {
+  return (
+    <div class={`${isOpened() ? 'max-w-[20%] transition-all duration-500 ease-out' : 'max-w-0 transition-all duration-500 ease-in'} bg-black shrink-0 overflow-hidden`}>
+        {/* logo section */}
+        <div class="px-4 py-8 flex flex-col items-center gap-y-4 shrink-0">
+            <img src={institutionLogoHref} alt="institution-logo" class="w-[80px] max-w-[80px] shrink-0" />
+            <h1 class="text-lg font-semibold text-gray-200 whitespace-nowrap">{institutionName ? institutionName : "Zenith University"}</h1>
         </div>
-    )
+        {/* logo section */}
+
+        <div class="mt-8 px-4 shrink-0">
+            {children}
+        </div>
+    </div>
+  )
 }
