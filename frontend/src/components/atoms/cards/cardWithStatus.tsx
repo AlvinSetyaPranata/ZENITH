@@ -11,7 +11,7 @@ export default function CardWithStatus({ title, time, status }: CardWithStatusPr
   return (
     <div class="max-w-[350px] h-[149px] rounded-md w-full bg-gradient-to-br to-[#1C1B1B] from-[#323232] px-4 py-5  flex flex-col justify-between">
       {/* head section */}
-      <h4 class="text-gray-200 uppercase font-light">{title}</h4>
+      <h4 class="text-gray-200 capitalize">{title}</h4>
       {/* head section */}
       <div class="w-full flex justify-between items-end">
         <p class="text-gray-300">{convertTimestampToDate(time)}</p>

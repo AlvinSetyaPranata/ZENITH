@@ -6,13 +6,7 @@ import RootLayout from "./components/layouts/RootLayout";
 
 export default function App() {
   return (
-    <Router
-      root={(props) => (
-        <RootLayout>
-          <Suspense>{props.children}</Suspense>
-        </RootLayout>
-      )}
-    >
+    <Router root={(props) => <Suspense>{props.children}</Suspense>}>
       <FileRoutes />
     </Router>
   );

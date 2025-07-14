@@ -1,40 +1,20 @@
-import { MetaProvider, Title } from "@solidjs/meta";
-import { createSignal } from "solid-js";
-import Card from "~/components/atoms/cards/card";
-import CardWithStatus from "~/components/atoms/cards/cardWithStatus";
+import Button from "~/components/atoms/button";
+import InputForm from "~/components/atoms/forms/input-form";
 
-export default function Home() {
-
-  const [clicked, setClicked] = createSignal(0)
-
+export default function Login() {
   return (
-    <>
-    <MetaProvider>
-      <Title>Zenith - Dashboard</Title>
-    </MetaProvider>
+    <div class="bg-black w-full min-h-screen grid place-items-center">
+      <div class="bg-background-800 w-1/2 h-[500px] text-center p-8">
+          <h1 class="text-3xl font-semibold">Selamat Datang</h1>
+          <p class="mt-4 text-gray-400">Yuk, login dulu sebelum masuk, ^-^</p>
 
-
-    {/* content */}
-    <main class="text-left mx-auto text-gray-700 p-8 bg-background-800 min-h-screen">
-      <h2 class="text-2xl text-white font-medium">Selamat pagi, fricilia!</h2>
-      <p class="mt-2 text-gray-400">Berikut adalah dashboard pribadi mu, {`(p>_<p)`}</p>
-
-      <section class="w-full grid grid-cols-3 mt-14">
-          <Card title="Kelas" icon="charm:graduate-cap" desc="1" />
-          <Card title="Tugas" icon="material-symbols:task-outline" desc="1" />
-          <Card title="Ipk" icon="material-symbols-light:stars-outline" desc="1" />
-      </section>
-
-
-      <section class="mt-14">
-          <h2 class="text-2xl text-white font-medium mt-24">Aktivitas Perkuliahan</h2>
-          <div class="w-full grid grid-cols-3 mt-12">
-            <CardWithStatus title="Pemograman Dasar" time="0000-01-01T12:00:00Z" status="Berlangsung" />
-            <CardWithStatus title="Pemograman Web Lanjut" time="0000-01-01T14:00:00Z" status="Selesai" />
-            <CardWithStatus title="Analisis sistem cerdas" time="0000-01-01T09:00:00Z" status="Mendatang" />
+          <div class="space-y-12 mt-18 flex flex-col items-center">
+            <InputForm title="Username" />
+            <InputForm title="Password" type="password" />
+            <Button title="Masuk" />
           </div>
-      </section>
-    </main>
-    </>
-  );
+      </div>
+
+    </div>
+  )
 }
