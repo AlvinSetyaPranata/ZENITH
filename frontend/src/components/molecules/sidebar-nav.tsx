@@ -14,7 +14,6 @@ export default function SidebarNav({ title, id, icon, children, isOpenSetter,isO
 
 
   const handleToogle = () => {
-    console.log("isOpened: " + isOpened + ", id: " + id)
     if (isOpened()) {
       isOpenSetter(0)
       return
