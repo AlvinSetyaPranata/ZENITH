@@ -12,7 +12,7 @@ export default function Sidebar({ isOpened, institutionName, institutionLogoHref
         {/* logo section */}
         <div class="px-4 py-8 flex flex-col items-center gap-y-4 shrink-0">
             <img src={institutionLogoHref} alt="institution-logo" class="w-[80px] max-w-[80px] shrink-0" />
-            <h1 class="text-lg font-semibold text-gray-200 whitespace-nowrap">{institutionName ? institutionName : "Zenith University"}</h1>
+            <h1 class="font-semibold text-gray-200 whitespace-nowrap">{institutionName ? institutionName : "Zenith University"}</h1>
         </div>
         {/* logo section */}
 
