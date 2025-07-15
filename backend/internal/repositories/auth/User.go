@@ -122,10 +122,6 @@ func (repository *UserRepository) Delete(ctx context.Context, userEntity *entiti
 		}
 	}()
 
-	if err := repository.DB.Model(userEntity).Association("Role").Clear(); err != nil {
-		return err
-	}
-
 	if err := repository.DB.Where("id = ?", id).Delete(userEntity); err != nil {
 		return err.Error
 	}
