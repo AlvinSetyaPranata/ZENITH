@@ -9,6 +9,7 @@ export default function RootLayout({ children }: ParentProps) {
   const [sidebarOpened, setSidebarOpened] = createSignal(true);
   const [profilePopover, setProfilePopover] = createSignal(false)
 
+
   // createEffect(() => console.log(sidebarOpened()), [sidebarOpened])
 
   return (

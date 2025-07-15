@@ -17,6 +17,9 @@ export function AuthProvider(props: ParentProps) {
     // this function should be run before profile data is stored in memory
     // for persistent storage we use session storage with value that has been obfuscate before
 
+    if (typeof window === "undefined") return
+
+
     if (user) {
       // TODO: Add obfuscate method to perform
       sessionStorage.setItem("user", JSON.stringify(user));
@@ -34,7 +37,11 @@ export function AuthProvider(props: ParentProps) {
   };
 
   const getUserData = () => {
+
+    if (typeof window === "undefined") return null
+
     if (user.user) return user;
+
 
     const userData = sessionStorage.getItem("user");
     const token = sessionStorage.getItem("token");
@@ -48,7 +55,7 @@ export function AuthProvider(props: ParentProps) {
 
     setUser({ user: parsedUserData, token: token });
 
-    return parsedUserData
+    return user
   };
 
   const login = async (credentials: LoginWithNimCredentialsType) => {
