@@ -1,16 +1,19 @@
 import { useNavigate } from "@solidjs/router";
-import { createResource, createSignal, useContext } from "solid-js";
+import { createEffect, createResource, createSignal, useContext } from "solid-js";
 import z, { ZodError } from "zod";
 import { ZodIssue } from "zod";
 import { $ZodIssue } from "zod/v4/core";
 import Button from "~/components/atoms/button";
 import InputForm from "~/components/atoms/forms/input-form";
+import Sooner from "~/components/atoms/sooner";
 import { AuthContext } from "~/contexts/auth-context";
 
 export default function Login() {
   const navigation = useNavigate();
   const [isLoading, setIsLoading] = createSignal(false);
   const [errors, setErrors] = createSignal<$ZodIssue[]>([])
+
+  const [sonnerActive, setSoonerActive] = createSignal(false)
 
   const schema = z.object({
     email: z.email({ error: "Email tidak valid"}),
@@ -44,14 +47,15 @@ export default function Login() {
 
 
     setIsLoading(true)
-
+    
     const isLoggedIn = await auth?.login?.(credentialData);
-
+    
     if (!isLoggedIn) {
-      alert("Tidak bisa login")
+      setSoonerActive(true)
       return
     }
-
+    
+    setSoonerActive(true)
     setTimeout(() => {
       if (isLoggedIn) {
         // TODO: Later on will be overrided by role based
@@ -80,6 +84,9 @@ export default function Login() {
 
   return (
     <div class="bg-black w-full min-h-screen flex flex-col items-center justify-center gap-12">
+
+      <Sooner isActive={() => sonnerActive()} setIsActive={setSoonerActive}  title="Event has been created" desc="Sunday, december 03, 2023 at 9:00 AM" />
+
       {/* institution logo */}
       <div class="w-full flex flex-col items-center">
         <img class="w-[100px]" src="https://i0.wp.com/www.uim.ac.id/uimv2/wp-content/uploads/2020/10/Ico.png?resize=200%2C200&ssl=1" alt="institute-logo" />
@@ -98,7 +105,7 @@ export default function Login() {
           <InputForm invalidMessege={() => isInvalid("password", true)} isInvalid={() => isInvalid("password")} title="Password" name="password" type="password" />
           <Button isLoading={isLoading} title="Masuk" type="submit" />
         </form>
-      </div>xz
+      </div>
     </div>
   );
 }
