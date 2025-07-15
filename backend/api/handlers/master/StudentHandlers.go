@@ -43,6 +43,14 @@ func (Presenter *StudentHandler) GetStudentByIdHandler(ctx *fiber.Ctx) error {
 		"data":    StudentData,
 	})
 }
+func (Presenter *StudentHandler) GetStudentByUserIdHandler(ctx *fiber.Ctx) error {
+	StudentData, status, messege := Presenter.StudentPresenter.GetStudentByUserIdPresenter(ctx)
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"messege": messege,
+		"data":    StudentData,
+	})
+}
 func (Presenter *StudentHandler) UpdateStudentHandler(ctx *fiber.Ctx) error {
 	StudentData, status, messege := Presenter.StudentPresenter.UpdateStudentPresenter(ctx)
 

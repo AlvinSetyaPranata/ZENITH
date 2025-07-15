@@ -1,6 +1,7 @@
 package master
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -93,6 +94,29 @@ func (Service *StudentService) GetByIdStudentService(ctx *fiber.Ctx) (*entities.
 	}
 
 	return studentEntity, 200, "Data of studentr, with given, ID!"
+}
+
+func (Service *StudentService) GetStudentByUserIdService(ctx *fiber.Ctx) (*entities.Student, int, string) {
+	user_id := ctx.QueryInt("user_id", -1)
+
+	if user_id == -1 {
+		return nil, 400, "Bad Request!"
+	}
+
+	studentEntity := new(entities.Student)
+
+	if err := Service.StudentRepository.GetBySingleQuery(ctx.UserContext(), studentEntity, fmt.Sprintf("user_id = %d", user_id)); err != nil {
+
+		if errType := utils.HandlerError(err); errType == 404 {
+
+			return nil, 404, "Student with given id, is not found!"
+		}
+		return nil, 500, err.Error()
+
+	}
+
+	return studentEntity, 200, "Data of studentr, with given, ID!"
+
 }
 
 func (Service *StudentService) UpdateStudentService(ctx *fiber.Ctx, newStudentRequest *models.StudentRequestModel) (*entities.Student, int, string) {

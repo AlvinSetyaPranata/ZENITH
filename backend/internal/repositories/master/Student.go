@@ -64,6 +64,17 @@ func (Repository *StudentRepository) GetById(ctx context.Context, studentEntity 
 
 }
 
+func (Repository *StudentRepository) GetBySingleQuery(ctx context.Context, studentEntity *entities.Student, query string) error {
+	err := Repository.DB.Preload("Gender").Preload("City").Preload("Religion").Preload("Province").Preload("Country").Preload("Status").Preload("User").Preload("Faculty").Preload("StudyProgram").Where(query).Take(studentEntity)
+
+	if err != nil {
+		return err.Error
+	}
+
+	return nil
+
+}
+
 func (Repository *StudentRepository) Update(ctx context.Context, newStudentEntity *entities.Student, id string) error {
 	tx := Repository.DB.WithContext(ctx).Begin()
 	success := false

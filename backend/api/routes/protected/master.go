@@ -100,6 +100,7 @@ func (r *MasterConfig) SetupMasterRoute() {
 
 	// Student section route
 	protected.Get("/students", r.StudentHandler.GetAllStudentHandler)
+	protected.Get("/student", r.StudentHandler.GetStudentByUserIdHandler)
 	protected.Get("/student/:id", r.StudentHandler.GetStudentByIdHandler)
 	protected.Post("/student", r.StudentHandler.CreateStudentHandler)
 	protected.Put("/student/:id", r.StudentHandler.UpdateStudentHandler)

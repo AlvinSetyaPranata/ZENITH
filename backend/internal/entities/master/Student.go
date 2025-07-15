@@ -25,7 +25,7 @@ type Student struct {
 	Province       *Province     `gorm:"foreignKey:ProvinceId"`
 	City           *City         `gorm:"foreignKey:CityId"`
 	Status         *Status       `gorm:"foreignKey:StatusId"`
-	User           *auth.User    `gorm:"foreignKey:UserId"`
+	User           *auth.User    `gorm:"foreignKey:UserId;references:Id"`
 	Faculty        *Faculty      `gorm:"foreignKey:FacultyId"`
 	StudyProgram   *StudyProgram `gorm:"foreignKey:StudyProgramId"`
 	DateCreated    time.Time     `gorm:"column:date_created;autoCreateTime"`
