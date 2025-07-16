@@ -1,3 +1,4 @@
+import { redirect } from "@solidjs/router"
 import { useContext } from "solid-js"
 import { AuthContext } from "~/contexts/auth-context"
 
@@ -22,8 +23,8 @@ export async function GetStudentData() {
 
     
     if (studentRes.status == 401) {
-        throw new Error("Unauthorized")
-        return
+        // throw new Error("Unauthorized")
+        return false
     }
 
     const studentData = await studentRes.json()

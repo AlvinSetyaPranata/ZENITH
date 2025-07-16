@@ -25,6 +25,12 @@ export default function Home() {
     }
   }, [data.error]);
 
+  createEffect(() => {
+    if (data() == false) {
+      navigate("/")
+    }
+  }, [data])
+
   onMount(() => {
     refetch();
   });

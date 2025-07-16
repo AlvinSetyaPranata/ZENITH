@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { createEffect, createResource, createSignal, useContext } from "solid-js";
+import { createEffect, createResource, createSignal, onMount, useContext } from "solid-js";
 import z, { ZodError } from "zod";
 import { ZodIssue } from "zod";
 import { $ZodIssue } from "zod/v4/core";
@@ -7,21 +7,21 @@ import Button from "~/components/atoms/button";
 import InputForm from "~/components/atoms/forms/input-form";
 import Sooner from "~/components/atoms/sooner";
 import { AuthContext } from "~/contexts/auth-context";
+import { SoonerContext } from "~/contexts/sooner-context";
 
 export default function Login() {
   const navigation = useNavigate();
   const [isLoading, setIsLoading] = createSignal(false);
   const [errors, setErrors] = createSignal<$ZodIssue[]>([])
+  const sooner  = useContext(SoonerContext)
+  const auth = useContext(AuthContext);
 
-  const [sonnerActive, setSoonerActive] = createSignal(false)
 
   const schema = z.object({
     email: z.email({ error: "Email tidak valid"}),
     password: z.string().min(1, { error: "Harap masukkan password!"})
   })
 
-
-  const auth = useContext(AuthContext);
   
   const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault();
@@ -51,11 +51,12 @@ export default function Login() {
     const isLoggedIn = await auth?.login?.(credentialData);
     
     if (!isLoggedIn) {
-      setSoonerActive(true)
+      sooner?.show("Gagal login", "Harap Periksa kembali email dan password anda!")
       return
     }
+
     
-    setSoonerActive(true)
+    sooner?.show("Berhasil login", "Selamat datang!")
     setTimeout(() => {
       if (isLoggedIn) {
         // TODO: Later on will be overrided by role based
@@ -82,10 +83,20 @@ export default function Login() {
   }
 
 
+  onMount(() => {
+    if (!auth) {
+      throw new Error("Auth is not running!")
+    }
+
+    if (!sooner) {
+      throw new Error("Sooner is not running!")
+    }
+
+  })
+
+
   return (
     <div class="bg-black w-full min-h-screen flex flex-col items-center justify-center gap-12">
-
-      <Sooner isActive={() => sonnerActive()} setIsActive={setSoonerActive}  title="Event has been created" desc="Sunday, december 03, 2023 at 9:00 AM" />
 
       {/* institution logo */}
       <div class="w-full flex flex-col items-center">

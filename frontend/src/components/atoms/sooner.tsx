@@ -1,39 +1,16 @@
 import { Icon } from "@iconify-icon/solid";
-import { createEffect, createSignal, onMount } from "solid-js";
+import { createEffect } from "solid-js";
 import { Motion } from "solid-motionone";
 
 
 interface SoonerProps {
-    title: string;
-    desc: string;
-    isActive?: () => boolean;
-    setIsActive: (state: boolean) => void;
+    title?: string;
+    desc?: string;
+    isClosed: () => boolean;
+    setIsClosed: (state: boolean) => void;
 }
 
-export default function Sooner({ title, desc, isActive, setIsActive } : SoonerProps) {
-
-    const [isClosed, setIsClosed] = createSignal<boolean|undefined>(true)
-
-    onMount(() => {
-        if (isClosed()) {
-            setTimeout(() => setIsClosed(true), 3000)
-        }
-    })
-    
-    createEffect(() => {
-        if (isActive) {
-            setIsClosed(!isActive())
-            setTimeout(() => setIsClosed(true), 3000)
-        }
-    }, [isActive])
-
-    createEffect(() => console.log(isClosed()), [isClosed])
-
-
-    const handleActive = (state: boolean) => {
-        setIsClosed(state)
-        setIsActive(state)
-    }
+export default function Sooner({ title, desc, isClosed, setIsClosed } : SoonerProps) {
 
   return (
      <Motion.div
@@ -50,7 +27,7 @@ export default function Sooner({ title, desc, isActive, setIsActive } : SoonerPr
         <h2 class="text-sm">{title}</h2>
         <p class="text-sm text-gray-300 font-light">{desc}</p>
       </div>
-      <Icon icon="material-symbols:close" onClick={() => handleActive(true)} />
+      <Icon icon="material-symbols:close" onClick={() => setIsClosed(true)} />
     </Motion.div>
   )
 }
