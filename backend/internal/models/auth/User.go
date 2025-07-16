@@ -19,6 +19,7 @@ type UserResponseModel struct {
 	Id          uint      `json:"id" validate:"true"`
 	Email       string    `json:"email" validate:"true"`
 	RoleId      uint      `json:"role_id" validate:"true"`
+	RoleName    string    `json:"role_name" validate:"true"`
 	DateCreated time.Time `json:"date_created" validate:"true"`
 	DateUpdated time.Time `json:"date_updated" validate:"true"`
 }

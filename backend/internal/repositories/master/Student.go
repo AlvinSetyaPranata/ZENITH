@@ -54,7 +54,7 @@ func (Repository *StudentRepository) GetAll(ctx context.Context, studentEntities
 }
 func (Repository *StudentRepository) GetById(ctx context.Context, studentEntity *entities.Student, id string) error {
 
-	err := Repository.DB.Preload("Gender").Preload("City").Preload("Religion").Preload("Province").Preload("Country").Preload("Status").Preload("User").Preload("Faculty").Preload("StudyProgram").Where("npm = ?", id).Take(studentEntity)
+	err := Repository.DB.Preload("Gender").Preload("City").Preload("Religion").Preload("Province").Preload("Country").Preload("Status").Preload("User").Preload("User.Role").Preload("Faculty").Preload("StudyProgram").Where("npm = ?", id).Take(studentEntity)
 
 	if err != nil {
 		return err.Error
@@ -65,7 +65,7 @@ func (Repository *StudentRepository) GetById(ctx context.Context, studentEntity 
 }
 
 func (Repository *StudentRepository) GetBySingleQuery(ctx context.Context, studentEntity *entities.Student, query string) error {
-	err := Repository.DB.Preload("Gender").Preload("City").Preload("Religion").Preload("Province").Preload("Country").Preload("Status").Preload("User").Preload("Faculty").Preload("StudyProgram").Where(query).Take(studentEntity)
+	err := Repository.DB.Preload("Gender").Preload("City").Preload("Religion").Preload("Province").Preload("Country").Preload("Status").Preload("User").Preload("User.Role").Preload("Faculty").Preload("StudyProgram").Where(query).Take(studentEntity)
 
 	if err != nil {
 		return err.Error

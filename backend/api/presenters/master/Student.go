@@ -1,6 +1,8 @@
 package master
 
 import (
+	"fmt"
+
 	authModels "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/auth"
 	models "github.com/AlvinSetyaPranata/ZENITH/backend/internal/models/master"
 	services "github.com/AlvinSetyaPranata/ZENITH/backend/internal/services/master"
@@ -161,6 +163,8 @@ func (Presenter *StudentPresenter) GetAllStudentPresenter(ctx *fiber.Ctx) (*[]mo
 
 func (Presenter *StudentPresenter) GetStudentByIdPresenter(ctx *fiber.Ctx) (*models.StudentResponseModel, int, string) {
 
+	fmt.Println("Goes here")
+
 	studentEntity, status, messege := Presenter.StudentService.GetByIdStudentService(ctx)
 
 	if status != 200 {
@@ -204,6 +208,7 @@ func (Presenter *StudentPresenter) GetStudentByIdPresenter(ctx *fiber.Ctx) (*mod
 		User: authModels.UserResponseModel{
 			Id:          studentEntity.User.Id,
 			RoleId:      uint(studentEntity.User.RoleId),
+			RoleName:    studentEntity.User.Role.Name,
 			DateCreated: studentEntity.DateCreated,
 			DateUpdated: studentEntity.DateUpdated,
 		},
@@ -271,6 +276,7 @@ func (Presenter *StudentPresenter) GetStudentByUserIdPresenter(ctx *fiber.Ctx) (
 		User: authModels.UserResponseModel{
 			Id:          studentEntity.User.Id,
 			RoleId:      uint(studentEntity.User.RoleId),
+			RoleName:    studentEntity.User.Role.Name,
 			DateCreated: studentEntity.DateCreated,
 			DateUpdated: studentEntity.DateUpdated,
 		},
