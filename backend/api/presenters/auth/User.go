@@ -116,10 +116,27 @@ func (Presenter *UserPresenter) LoginPresenter(ctx *fiber.Ctx) (*models.UserCred
 		return nil, "", "", status, messege
 	}
 
+	permissionsResponse := make([]models.PermissionResponse, len(userEntity.Role.Permissions))
+
+	for i, p := range userEntity.Role.Permissions {
+		permissionsResponse[i] = models.PermissionResponse{
+			Id:          p.Id,
+			Name:        p.Name,
+			DateCreated: p.DateCreated,
+			DateUpdated: p.DateUpdated,
+		}
+	}
+
 	response := &models.UserCredentialResponseModel{
 		Id:    userEntity.Id,
 		Email: userEntity.Email,
-		Role:  userEntity.Role,
+		Role: &models.RoleModelResponse{
+			Id:          userEntity.Role.Id,
+			Name:        userEntity.Role.Name,
+			Permissions: permissionsResponse,
+			DateCreated: userEntity.DateCreated,
+			DateUpdated: userEntity.DateUpdated,
+		},
 	}
 
 	return response, access_token, refresh_token, status, messege

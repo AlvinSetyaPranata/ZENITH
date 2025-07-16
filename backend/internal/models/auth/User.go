@@ -2,8 +2,6 @@ package auth
 
 import (
 	"time"
-
-	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/auth"
 )
 
 type UserCredentialRequestModel struct {
@@ -26,7 +24,7 @@ type UserResponseModel struct {
 }
 
 type UserCredentialResponseModel struct {
-	Id    uint          `json:"id" validate:"true"`
-	Email string        `json:"email" validate:"true"`
-	Role  entities.Role `json:"role_id" validate:"true"`
+	Id    uint               `json:"id" validate:"true"`
+	Email string             `json:"email" validate:"true"`
+	Role  *RoleModelResponse `json:"role" validate:"true"`
 }

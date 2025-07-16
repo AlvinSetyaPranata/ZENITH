@@ -67,7 +67,7 @@ func (repository *UserRepository) GetUserById(ctx context.Context, userEntity *e
 
 func (repository *UserRepository) GetUserByEmail(ctx context.Context, userEntity *entities.User, email string) error {
 
-	if err := repository.DB.Preload("Role").Where("email = ?", email).Take(userEntity); err != nil {
+	if err := repository.DB.Preload("Role").Preload("Role.Permissions").Where("email = ?", email).Take(userEntity); err != nil {
 		return err.Error
 	}
 

@@ -31,10 +31,21 @@ func (Presenter *RolePresenter) CreateRolePresenter(ctx *fiber.Ctx) (*models.Rol
 		return nil, status, messege
 	}
 
+	permissonResponse := make([]models.PermissionResponse, len(*permissions))
+
+	for _, p := range *permissions {
+		permissonResponse = append(permissonResponse, models.PermissionResponse{
+			Id:          p.Id,
+			Name:        p.Name,
+			DateCreated: p.DateCreated,
+			DateUpdated: p.DateUpdated,
+		})
+	}
+
 	response := &models.RoleModelResponse{
 		Id:          roleEntity.Id,
 		Name:        roleEntity.Name,
-		Permissions: *permissions,
+		Permissions: permissonResponse,
 		DateCreated: roleEntity.DateCreated,
 		DateUpdated: roleEntity.DateCreated,
 	}
@@ -52,10 +63,22 @@ func (Presenter *RolePresenter) GetAllRolesPresenter(ctx *fiber.Ctx) (*[]models.
 	response := make([]models.RoleModelResponse, 0, len(*roleEntity))
 
 	for _, role := range *roleEntity {
+
+		permissonResponse := make([]models.PermissionResponse, len(role.Permissions))
+
+		for _, p := range role.Permissions {
+			permissonResponse = append(permissonResponse, models.PermissionResponse{
+				Id:          p.Id,
+				Name:        p.Name,
+				DateCreated: p.DateCreated,
+				DateUpdated: p.DateUpdated,
+			})
+		}
+
 		response = append(response, models.RoleModelResponse{
 			Id:          role.Id,
 			Name:        role.Name,
-			Permissions: role.Permissions,
+			Permissions: permissonResponse,
 			DateCreated: role.DateCreated,
 		})
 	}
@@ -90,10 +113,21 @@ func (Presenter *RolePresenter) UpdateRole(ctx *fiber.Ctx) (*models.RoleModelRes
 		return nil, status, messege
 	}
 
+	permissonResponse := make([]models.PermissionResponse, len(*permissions))
+
+	for _, p := range *permissions {
+		permissonResponse = append(permissonResponse, models.PermissionResponse{
+			Id:          p.Id,
+			Name:        p.Name,
+			DateCreated: p.DateCreated,
+			DateUpdated: p.DateUpdated,
+		})
+	}
+
 	response := &models.RoleModelResponse{
 		Id:          roleEntity.Id,
 		Name:        roleEntity.Name,
-		Permissions: *permissions,
+		Permissions: permissonResponse,
 		DateCreated: roleEntity.DateCreated,
 		DateUpdated: roleEntity.DateCreated,
 	}
