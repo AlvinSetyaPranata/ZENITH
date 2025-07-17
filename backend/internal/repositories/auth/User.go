@@ -164,7 +164,7 @@ func (repository *UserRepository) InvalidateToken(ctx context.Context, tokenEnti
 		}
 	}()
 
-	if err := repository.DB.Model(&entities.Token{}).Where("user_id = ?", userId).Updates(tokenEntity).Error; err != nil {
+	if err := repository.DB.Model(&entities.Token{}).Where("user_id = ?", userId).Where("revoked = ?", false).Order("created_at DESC").Updates(tokenEntity).Error; err != nil {
 		log.Fatalf("Error occured: %s", err.Error())
 	}
 
@@ -173,6 +173,6 @@ func (repository *UserRepository) InvalidateToken(ctx context.Context, tokenEnti
 
 func (repository *UserRepository) GetToken(ctx context.Context, tokenEntity *entities.Token, userId uint) error {
 
-	return repository.DB.Where("user_id = ?", userId).First(tokenEntity).Error
+	return repository.DB.Where("user_id = ?", userId).Where("revoked = ?", false).Order("created_at DESC").First(tokenEntity).Error
 
 }
