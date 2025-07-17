@@ -14,4 +14,5 @@ func (config *PublicConfig) SetupPublicRoute() {
 	group := config.App.Group("/")
 
 	group.Post("/login", config.UserHandler.LoginHandler)
+	group.Post("/logout", config.UserHandler.LogoutHandler)
 }

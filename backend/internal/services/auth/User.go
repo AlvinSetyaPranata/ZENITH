@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	utils "github.com/AlvinSetyaPranata/ZENITH/backend/utils"
 	authUtils "github.com/AlvinSetyaPranata/ZENITH/backend/utils/auth"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3/log"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -189,11 +191,10 @@ func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *mode
 	// Check if the token with given id is still valid
 	// If it's then invalidate it
 
-	currentToken := &entities.Token{}
-
-	if err := Service.UserRepository.GetToken(ctx.UserContext(), currentToken, currentUser.Id); err == nil {
-		currentToken.Revoked = true
-		Service.UserRepository.InvalidateToken(ctx.UserContext(), currentToken, currentUser.Id)
+	if err := Service.UserRepository.GetToken(ctx.UserContext(), currentUser.Id); err == nil {
+		Service.UserRepository.InvalidateToken(ctx.UserContext(), &entities.Token{
+			Revoked: true,
+		}, currentUser.Id)
 	}
 
 	// Create new one
@@ -223,6 +224,30 @@ func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *mode
 
 }
 
-// func (Service *UserService) LogoutService(ctx *fiber.Ctx) (int) {
+func (Service *UserService) LogoutService(ctx *fiber.Ctx, logoutRequetModel *models.LoogutCredentialModel) (int, string) {
+	if err := ctx.BodyParser(logoutRequetModel); err != nil {
+		return 400, "Bad Request!"
+	}
 
-// }
+	currentUser := new(entities.User)
+
+	if err := Service.UserRepository.GetUserById(ctx.UserContext(), currentUser, logoutRequetModel.Id); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return 404, "User with given email is not found"
+		}
+		fmt.Println("Error getting user by ID:", err)
+		return 500, "Failed to retrieve user information!"
+	}
+
+	err := Service.UserRepository.GetToken(ctx.UserContext(), currentUser.Id)
+
+	if err == nil {
+		Service.UserRepository.InvalidateToken(ctx.UserContext(), &entities.Token{
+			Revoked: true,
+		}, currentUser.Id)
+		return 200, "Successfully, logged out the user!"
+	}
+
+	log.Fatalf("Error checking token existence: %s", err)
+	return 500, "Failed to logout user!"
+}

@@ -141,3 +141,12 @@ func (Presenter *UserPresenter) LoginPresenter(ctx *fiber.Ctx) (*models.UserCred
 
 	return response, access_token, refresh_token, status, messege
 }
+
+func (Presenter *UserPresenter) LogoutPresenter(ctx *fiber.Ctx) (int, string) {
+	logoutRequestModel := new(models.LoogutCredentialModel)
+
+	status, messege := Presenter.UserService.LogoutService(ctx, logoutRequestModel)
+
+	return status, messege
+
+}

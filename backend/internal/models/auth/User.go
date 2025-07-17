@@ -9,6 +9,10 @@ type UserCredentialRequestModel struct {
 	Password string `json:"password" validate:"true"`
 }
 
+type LoogutCredentialModel struct {
+	Id string `json:"id" validate:"true"`
+}
+
 type UserRequestModel struct {
 	Email    string `json:"email" validate:"true"`
 	Password string `json:"password" validate:"true"`
