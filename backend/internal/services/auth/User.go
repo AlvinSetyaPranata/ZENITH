@@ -165,7 +165,7 @@ func (Service *UserService) DeleteUserService(ctx *fiber.Ctx) (int, string) {
 	return 204, ""
 }
 
-// Credential
+// Credentials services
 
 func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *models.UserCredentialRequestModel) (*entities.User, string, string, int, string) {
 	if err := ctx.BodyParser(loginRequestModel); err != nil {
@@ -186,9 +186,34 @@ func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *mode
 		return nil, "", "", 401, "Username or Password is incorrect!"
 	}
 
+	// Check if the token with given id is still valid
+	// If it's then invalidate it
+
+	currentToken := &entities.Token{}
+
+	if err := Service.UserRepository.GetToken(ctx.UserContext(), currentToken, currentUser.Id); err == nil {
+		currentToken.Revoked = true
+		Service.UserRepository.InvalidateToken(ctx.UserContext(), currentToken, currentUser.Id)
+	}
+
+	// Create new one
+
 	userID := strconv.FormatUint(uint64(currentUser.Id), 10)
 
-	access_token, refresh_token := authUtils.GenerateToken(userID, currentUser.Role.Name)
+	access_token, refresh_token, expiredTime := authUtils.GenerateToken(userID, currentUser.Role.Name)
+
+	// Store refresh token to DB
+
+	refreshToken := &entities.Token{
+		User:      *currentUser,
+		Revoked:   false,
+		ExpiredAt: expiredTime,
+		CreatedAt: time.Now(),
+	}
+
+	if err := Service.UserRepository.StoreToken(ctx.UserContext(), refreshToken); err != nil {
+		return nil, "", "", 500, "Internal Server Error!"
+	}
 
 	if access_token == "" || refresh_token == "" {
 		return nil, "", "", 500, "Internal Server Error!"
@@ -197,3 +222,7 @@ func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *mode
 	return currentUser, access_token, refresh_token, 200, "Login successfull!"
 
 }
+
+// func (Service *UserService) LogoutService(ctx *fiber.Ctx) (int) {
+
+// }

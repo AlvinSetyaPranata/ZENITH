@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -12,33 +11,35 @@ var (
 	refreshSecret = []byte("refresh_secret_example")
 )
 
-func GenerateToken(userID string, role string) (string, string) {
+func GenerateToken(userID string, role string) (string, string, int64) {
 
 	accessClaims := jwt.MapClaims{
 		"user_id": userID,
 		"role":    role,
-		"exp":     time.Now().Add(15 * time.Minute).Unix(),
+		"exp":     ACCESS_TOKEN_EXPIRED_TIME,
 	}
 
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
 	accessSignedToken, err := accessToken.SignedString(accessSecret)
 	if err != nil {
-		return "", ""
+		return "", "", 0
 	}
+
+	refresh_expired_time := REFRESH_TOKEN_EXPIRED_TIME
 
 	refreshClaims := jwt.MapClaims{
 		"user_id": userID,
 		"role":    role,
-		"exp":     time.Now().Add(7 * 24 * time.Hour).Unix(),
+		"exp":     refresh_expired_time,
 	}
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
 	refreshSignedToken, err := refreshToken.SignedString(refreshSecret)
 	if err != nil {
-		return "", ""
+		return "", "", 0
 	}
 
-	return accessSignedToken, refreshSignedToken
+	return accessSignedToken, refreshSignedToken, refresh_expired_time
 }
 
 func ParseToken(tokenStr string, isAccessToken bool) (string, string, error) {
@@ -67,4 +68,8 @@ func ParseToken(tokenStr string, isAccessToken bool) (string, string, error) {
 	role, _ := claims["role"].(string)
 
 	return userID, role, nil
+}
+
+func InvalidateToken(tokenStr string) string {
+	return ""
 }

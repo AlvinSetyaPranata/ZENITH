@@ -54,6 +54,7 @@ func MigrateAuth(config *BoostrapConfig) bool {
 		&authEntities.Permission{},
 		&authEntities.Role{},
 		&authEntities.User{},
+		&authEntities.Token{},
 	)
 
 	if err != nil {

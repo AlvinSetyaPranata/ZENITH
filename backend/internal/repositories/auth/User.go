@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"log"
 
 	entities "github.com/AlvinSetyaPranata/ZENITH/backend/internal/entities/auth"
 	"go.uber.org/zap"
@@ -131,5 +132,47 @@ func (repository *UserRepository) Delete(ctx context.Context, userEntity *entiti
 	}
 
 	return nil
+
+}
+
+func (repository *UserRepository) StoreToken(ctx context.Context, tokenEntity *entities.Token) error {
+	tx := repository.DB.WithContext(ctx)
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Create(tokenEntity); err != nil {
+		return err.Error
+	}
+
+	success = true
+
+	return nil
+}
+
+func (repository *UserRepository) InvalidateToken(ctx context.Context, tokenEntity *entities.Token, userId uint) {
+	tx := repository.DB.WithContext(ctx)
+	success := false
+
+	defer func() {
+		if !success {
+			tx.Rollback()
+		}
+	}()
+
+	if err := repository.DB.Model(&entities.Token{}).Where("user_id = ?", userId).Updates(tokenEntity).Error; err != nil {
+		log.Fatalf("Error occured: %s", err.Error())
+	}
+
+	success = true
+}
+
+func (repository *UserRepository) GetToken(ctx context.Context, tokenEntity *entities.Token, userId uint) error {
+
+	return repository.DB.Where("user_id = ?", userId).First(tokenEntity).Error
 
 }

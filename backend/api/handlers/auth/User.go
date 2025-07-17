@@ -93,3 +93,11 @@ func (Handler *UserHandler) LoginHandler(ctx *fiber.Ctx) error {
 	})
 
 }
+
+func (Handler *UserHandler) LogoutHandler(ctx *fiber.Ctx) error {
+	ctx.ClearCookie("refresh_token")
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"messege": "Successfully logout!",
+	})
+}
