@@ -226,6 +226,7 @@ func (Service *UserService) LoginService(ctx *fiber.Ctx, loginRequestModel *mode
 
 func (Service *UserService) LogoutService(ctx *fiber.Ctx, logoutRequetModel *models.LoogutCredentialModel) (int, string) {
 	if err := ctx.BodyParser(logoutRequetModel); err != nil {
+		Service.Log.Debugf("Error occured: %s", err.Error())
 		return 400, "Bad Request!"
 	}
 

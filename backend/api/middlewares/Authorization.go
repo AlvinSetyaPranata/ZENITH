@@ -28,6 +28,8 @@ func AuthenticationCheck(c *fiber.Ctx) error {
 
 	token := splitedTokenHeader[1]
 
+	// fmt.Println(token)
+
 	userID, role, isValid := utils.ParseToken(token, true)
 
 	if isValid != nil {

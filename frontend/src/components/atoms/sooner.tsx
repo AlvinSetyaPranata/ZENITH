@@ -16,15 +16,7 @@ export default function Sooner({ id, title, desc, setIsClosed, timeout } : Soone
 
   onMount(() => setTimeout(() => {
     setIsClosed(id)
-  }, timeout ? timeout : 3000))
-
-  
-
-  const calculateTop = () => {
-    const offset = 80
-
-    return 20 * (id + 1) + ( id * offset)
-  }
+  }, timeout ?? 3000))
  
 
   return (
