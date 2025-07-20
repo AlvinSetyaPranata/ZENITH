@@ -59,7 +59,10 @@ export default function RootLayout({ children }: ParentProps) {
       return
     }
     
-    sooner?.show("Information", "Gagal logout")
+    setTimeout(() => {
+      
+      sooner?.show("Information", "Gagal logout")
+    }, 1000);
 
   }
 

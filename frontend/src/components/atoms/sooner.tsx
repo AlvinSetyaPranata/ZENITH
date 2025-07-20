@@ -16,15 +16,15 @@ export default function Sooner({ id, title, desc, setIsClosed, timeout } : Soone
 
   onMount(() => setTimeout(() => {
     setIsClosed(id)
-  }, timeout ?? 3000))
+  }, timeout ?? 2000))
  
 
   return (
     <Motion.div
-      initial={{ top: "-100px", opacity: 0 }}
-      exit={{ top: 0, opacity: 0, left: "100px" }}
-      animate={{ top: 0, opacity: 1 }}
-      transition={{ duration: 0.5, easing: "ease-out" }}
+      initial={{ y: "-100px", opacity: 0 }}
+      exit={{ y: 0, opacity: 0, left: "100px" }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, easing: "ease-out", delay: id * 0.1 }}
       class="w-[400px] rounded-md bg-neutral-800 border border-gray-700 p-4 flex items-center justify-between static"
       id={`sooner-${id}`}
     >
