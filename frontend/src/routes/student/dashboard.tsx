@@ -36,7 +36,7 @@ export default function Home() {
   });
 
   return (
-    <RootLayout>
+    <>
       <MetaProvider>
         <Title>Zenith - Dashboard</Title>
       </MetaProvider>
@@ -86,6 +86,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-    </RootLayout>
+    </>
   );
 }

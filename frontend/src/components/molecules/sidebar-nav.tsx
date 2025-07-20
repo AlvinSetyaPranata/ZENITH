@@ -24,19 +24,19 @@ export default function SidebarNav({ title, id, icon, children, isOpenSetter,isO
   }
 
   return (
-    <button class="rounded-md p-2 w-full hover:cursor-pointer" on:click={ handleToogle}>
+    <div class="rounded-md p-2 w-full">
       {/* upper */}
-      <div class="flex justify-between items-center">
+      <button class="flex justify-between items-center hover:cursor-pointer w-full" on:click={ handleToogle}>
         <h3 class={`${isOpened() ? 'text-gray-300' : 'text-gray-500'} font-medium`}>{title}</h3>
         {children && (
           <Icon icon="ion:chevron-forward-sharp" class={`size-[18px] transition-transform duration-300 ease-out text-white ${isOpened() ? "rotate-90 transition-transform duration-300 ease-in text-red-500" : "text-gray-500"}`} />
         )}
-      </div>
+      </button>
         {/* upper */}
 
-      <div class={`mt-6 text-sm text-left px-3 overflow-y-hidden ${isOpened() ? "max-h-[500px] transition-all duration-300 ease-in" : "max-h-0 transition-all duration-100 ease-out"} space-y-4`}>
+      <div class={`mt-4 text-sm text-left px-3 overflow-y-hidden ${isOpened() ? "max-h-[500px] transition-all duration-300 ease-in" : "max-h-0 transition-all duration-100 ease-out"} space-y-4`}>
         {children}
       </div>
-    </button>
+    </div>
   );
 }

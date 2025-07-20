@@ -12,7 +12,9 @@ export default function App() {
       root={(props) => (
         <Suspense>
           <AuthProvider>
-            <SoonerProvider>{props.children}</SoonerProvider>
+            <SoonerProvider>
+              <RootLayout>{props.children}</RootLayout>
+            </SoonerProvider>
           </AuthProvider>
         </Suspense>
       )}

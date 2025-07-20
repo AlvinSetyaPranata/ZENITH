@@ -19,6 +19,7 @@ import { SoonerContext } from "~/contexts/sooner-context";
 
 export default function RootLayout({ children }: ParentProps) {
   const navigate = useNavigate();
+  const location = useLocation()
   const [activeNav, setActiveNav] = createSignal(1);
   const [sidebarOpened, setSidebarOpened] = createSignal(true);
   const [profilePopover, setProfilePopover] = createSignal(false);
@@ -68,13 +69,26 @@ export default function RootLayout({ children }: ParentProps) {
 
 
   // TODO: Add listener to change the state of the side-nav depends on the current path
-  // createEffect(() => {
-  //   switch(location.pathname) {
-  //     case "/student/dashboard":
-  //       setActiveNav(1)
-  //       return
-  //   }
-  // }, [location]);
+  createEffect(() => {
+    switch(location.pathname) {
+      case "/student/dashboard":
+        setActiveNav(1)
+        return
+      case "/biodata/data-diri":
+        setActiveNav(2)
+        return
+
+    }
+  }, [location]);
+
+
+  createEffect(() => {
+    switch(activeNav()) {
+      case 1:
+        navigate("/student/dashboard")
+        return
+    }
+  }, [])
 
   return (
     <div class="flex bg-white min-h-screen w-full">
@@ -86,7 +100,7 @@ export default function RootLayout({ children }: ParentProps) {
         <SidebarNav
           id={1}
           title="Dashboard"
-          isOpened={() => activeNav() == 1}
+          isOpened={() => activeNav() == 1 || location.pathname == "/student/dashboard"}
           isOpenSetter={setActiveNav}
         />
         <SidebarNav
@@ -95,11 +109,11 @@ export default function RootLayout({ children }: ParentProps) {
           isOpened={() => activeNav() == 2}
           isOpenSetter={setActiveNav}
         >
-          <p>Data Diri</p>
-          <p>Data Orang Tua</p>
-          <p>Data Pendidikan</p>
-          <p>Data Alamat</p>
-          <p>Dokumen</p>
+          <A href="/student/biodata/data-diri" class={`block ${location.pathname == "/student/biodata/data-diri" ? "text-white" : "text-gray-500"}`}>Data Diri</A>
+          <p class={location.pathname == "/biodata/data-orangtua" ? "text-white" : "text-gray-500"}>Data Orang Tua</p>
+          <p class={location.pathname == "/biodata/data-pendidikan" ? "text-white" : "text-gray-500"}>Data Pendidikan</p>
+          <p class={location.pathname == "/biodata/data-alamat" ? "text-white" : "text-gray-500"}>Data Alamat</p>
+          <p class={location.pathname == "/biodata/data-dokumen" ? "text-white" : "text-gray-500"}>Dokumen</p>
         </SidebarNav>
         <SidebarNav
           id={3}
