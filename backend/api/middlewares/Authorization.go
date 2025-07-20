@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"log"
 	"strings"
 
 	"slices"
@@ -13,6 +14,7 @@ func AuthenticationCheck(c *fiber.Ctx) error {
 	tokenHeader := c.Get("Authorization")
 
 	if tokenHeader == "" {
+		log.Fatalf("Error caught: token header is %s", tokenHeader)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"messege": "Unauthorized, You have no access rights!",
 		})
@@ -21,6 +23,7 @@ func AuthenticationCheck(c *fiber.Ctx) error {
 	splitedTokenHeader := strings.Split(tokenHeader, " ")
 
 	if len(splitedTokenHeader) != 2 || splitedTokenHeader[0] != "Bearer" {
+		log.Fatalf("Error caught: token header is %s", tokenHeader)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"messege": "Unauthorized, You have no access rights!",
 		})
@@ -33,6 +36,7 @@ func AuthenticationCheck(c *fiber.Ctx) error {
 	userID, role, isValid := utils.ParseToken(token, true)
 
 	if isValid != nil {
+		log.Fatalf("Error caught: token valid => %s", isValid)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"messege": "Unauthorized, You have no access rights!",
 		})
