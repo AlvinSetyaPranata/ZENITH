@@ -1,7 +1,7 @@
 import { createContext, ParentProps } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AuthContextType, AuthStoreType } from "~/types/auth-types/store";
-import { LoginWithNimService } from "~/services/auth/login";
+import { LoginWithNimService, LogoutService } from "~/services/auth/login";
 import { LoginWithNimCredentialsType } from "~/types/auth-types/credentials";
 import { UserType } from "~/types/master-types/role-type";
 
@@ -41,16 +41,17 @@ export function AuthProvider(props: ParentProps) {
     if (typeof window === "undefined") return null
 
     if (user.user) return user;
-
-
+    
+    
+    
     const userData = sessionStorage.getItem("user");
     const token = sessionStorage.getItem("token");
-
+    
     // Profile data in memory is missing due to page refresh or hot reload
     if (!userData) return null;
-
+    
     // TODO: Add deobfuscate method to extract user profile to inserted in memory
-
+    
     const parsedUserData = JSON.parse(userData)
 
     setUser({ user: parsedUserData, token: token });
@@ -73,9 +74,21 @@ export function AuthProvider(props: ParentProps) {
     return true;
   };
 
+
+  const logout = async () => {
+    const status =  await LogoutService(user.user?.id)
+
+    if (window != undefined && status) {
+      sessionStorage.clear()
+    }
+
+    return status
+  }
+
   const contextPayload: AuthContextType = {
     auth: user,
     login: login,
+    logout: logout,
     storeUserData: storeUserData,
     getUserData: getUserData,
   };

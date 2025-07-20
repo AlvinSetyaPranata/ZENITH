@@ -9,12 +9,13 @@ import {
 } from "solid-js";
 import Sidebar from "../ui/sidebar";
 import SidebarNav from "../molecules/sidebar-nav";
-import { A, useNavigate } from "@solidjs/router";
+import { A, useLocation, useNavigate } from "@solidjs/router";
 import { Icon } from "@iconify-icon/solid";
 import { AuthContext } from "~/contexts/auth-context";
 import { UserType } from "~/types/master-types/role-type";
 import { AuthStoreType } from "~/types/auth-types/store";
 import { GetStudentData } from "~/services/api/students/get-student-profile";
+import { SoonerContext } from "~/contexts/sooner-context";
 
 export default function RootLayout({ children }: ParentProps) {
   const navigate = useNavigate();
@@ -22,7 +23,12 @@ export default function RootLayout({ children }: ParentProps) {
   const [sidebarOpened, setSidebarOpened] = createSignal(true);
   const [profilePopover, setProfilePopover] = createSignal(false);
 
+  const auth = useContext(AuthContext)
+  const sooner = useContext(SoonerContext)
+
   const [data, { refetch }] = createResource(GetStudentData);
+
+  // const location = useLocation()
 
   createEffect(() => {
     if (data.error) {
@@ -35,12 +41,37 @@ export default function RootLayout({ children }: ParentProps) {
       navigate("/");
     }
   }, [data]);
-
+  
   onMount(() => {
     refetch();
   });
+  
+  
+  const handleLogout = async () => {
+    sooner?.show("Information", "Logging out...")
+    
+    const status = await auth?.logout()
+    
+    
+    if (status) {
+      sooner?.show("Information", "Berhasil logout")
+      navigate("/");
+      return
+    }
+    
+    sooner?.show("Information", "Gagal logout")
 
-  createEffect(() => console.log(data()), [data]);
+  }
+
+
+  // TODO: Add listener to change the state of the side-nav depends on the current path
+  // createEffect(() => {
+  //   switch(location.pathname) {
+  //     case "/student/dashboard":
+  //       setActiveNav(1)
+  //       return
+  //   }
+  // }, [location]);
 
   return (
     <div class="flex bg-white min-h-screen w-full">
@@ -148,9 +179,9 @@ export default function RootLayout({ children }: ParentProps) {
               <A href="/" class="text-black block hover:underline">
                 Pengaturan
               </A>
-              <A href="/" class="text-red-500 block hover:underline">
+              <button on:click={handleLogout} class="text-red-500 block hover:underline text-center w-full hover:cursor-pointer">
                 Keluar
-              </A>
+              </button>
             </div>
             {/* profile popover section */}
           </div>

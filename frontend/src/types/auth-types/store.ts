@@ -12,6 +12,7 @@ export interface AuthStoreType {
 export interface AuthContextType {
     auth: AuthStoreType;
     login: (credentials: LoginWithNimCredentialsType) => Promise<boolean>;
+    logout: () => Promise<boolean>;
     storeUserData: (user: UserType, token: string) => void;
     getUserData: () => AuthStoreType|null|undefined
 }

@@ -1,10 +1,8 @@
-import { redirect } from "@solidjs/router"
 import { useContext } from "solid-js"
 import { AuthContext } from "~/contexts/auth-context"
 
 export async function GetStudentData() {
     const authContext = useContext(AuthContext)
-
 
     const userData = authContext?.getUserData()
     
