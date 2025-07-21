@@ -11,6 +11,22 @@ var (
 	refreshSecret = []byte("refresh_secret_example")
 )
 
+func GenerateNewAccessToken(userID string, role string) (string, error) {
+	accessClaims := jwt.MapClaims{
+		"user_id": userID,
+		"role":    role,
+		"exp":     ACCESS_TOKEN_EXPIRED_TIME,
+	}
+
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
+	accessSignedToken, err := accessToken.SignedString(accessSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return accessSignedToken, nil
+}
+
 func GenerateToken(userID string, role string) (string, string, int64) {
 
 	accessClaims := jwt.MapClaims{

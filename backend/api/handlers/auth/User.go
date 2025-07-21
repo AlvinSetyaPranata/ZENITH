@@ -106,3 +106,17 @@ func (Handler *UserHandler) LogoutHandler(ctx *fiber.Ctx) error {
 		"messege": messege,
 	})
 }
+
+func (Handler *UserHandler) RefreshTokenHandler(ctx *fiber.Ctx) error {
+
+	token, status, messege := Handler.UserPresenter.RefreshTokenPresenter(ctx)
+
+	if status == 200 {
+		ctx.ClearCookie("refresh_token")
+	}
+
+	return ctx.Status(status).JSON(fiber.Map{
+		"access_token": token,
+		"messege":      messege,
+	})
+}

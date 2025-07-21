@@ -252,3 +252,27 @@ func (Service *UserService) LogoutService(ctx *fiber.Ctx, logoutRequetModel *mod
 	log.Fatalf("Error checking token existence: %s", err)
 	return 500, "Failed to logout user!"
 }
+
+func (Service *UserService) RefreshTokenService(ctx *fiber.Ctx) (string, int, string) {
+
+	refresh_token := ctx.Cookies("refresh_token")
+
+	if refresh_token == "" {
+		return "", 400, "Refresh Token is invalid!"
+	}
+
+	userID, userRole, err := authUtils.ParseToken(refresh_token, false)
+
+	if err != nil {
+		return "", 400, err.Error()
+	}
+
+	token, tokenErr := authUtils.GenerateNewAccessToken(userID, userRole)
+
+	if tokenErr != nil {
+		return "", 500, tokenErr.Error()
+	}
+
+	return token, 200, ""
+
+}

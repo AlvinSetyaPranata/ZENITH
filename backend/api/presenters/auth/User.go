@@ -150,3 +150,11 @@ func (Presenter *UserPresenter) LogoutPresenter(ctx *fiber.Ctx) (int, string) {
 	return status, messege
 
 }
+
+func (Presenter *UserPresenter) RefreshTokenPresenter(ctx *fiber.Ctx) (string, int, string) {
+
+	token, status, messege := Presenter.UserService.RefreshTokenService(ctx)
+
+	return token, status, messege
+
+}

@@ -37,9 +37,17 @@ func AuthenticationCheck(c *fiber.Ctx) error {
 
 	if isValid != nil {
 		log.Fatalf("Error caught: token valid => %s", isValid)
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"messege": "Unauthorized, You have no access rights!",
-		})
+
+		refresh_token := c.Cookies("refresh_token")
+
+		if refresh_token == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"messege": "Unauthorized, You have no access rights!",
+			})
+		}
+
+		c.Location("/auth/refresh")
+
 	}
 
 	c.Locals("userID", userID)

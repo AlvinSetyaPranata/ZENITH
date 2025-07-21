@@ -15,4 +15,5 @@ func (config *PublicConfig) SetupPublicRoute() {
 
 	group.Post("/login", config.UserHandler.LoginHandler)
 	group.Post("/logout", config.UserHandler.LogoutHandler)
+	group.Post("/token/refresh", config.UserHandler.LogoutHandler)
 }
