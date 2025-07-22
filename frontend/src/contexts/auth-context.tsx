@@ -38,7 +38,10 @@ export function AuthProvider(props: ParentProps) {
 
   const getUserData = () => {
 
-    if (typeof window === "undefined") return null
+    if (typeof window === "undefined") {
+      console.error("Componenet didnt mount yet!")
+      return null
+    }
 
     if (user.user) return user;
     
@@ -47,8 +50,11 @@ export function AuthProvider(props: ParentProps) {
     const userData = sessionStorage.getItem("user");
     const token = sessionStorage.getItem("token");
     
-    // Profile data in memory is missing due to page refresh or hot reload
-    if (!userData) return null;
+    // Profile data in session is missing causing
+    if (!userData) {
+      sessionStorage.clear()
+      return null
+    };
     
     // TODO: Add deobfuscate method to extract user profile to inserted in memory
     
@@ -60,11 +66,9 @@ export function AuthProvider(props: ParentProps) {
   };
 
   const login = async (credentials: LoginWithNimCredentialsType) => {
-    const response = await LoginWithNimService(credentials);
+    const {response, status} = await LoginWithNimService(credentials);
 
-    if (response.status == 401) {
-      // TODO: Refetch to update access token
-      console.log("Unauthenticated");
+    if (!status) {
       return false;
     }
 

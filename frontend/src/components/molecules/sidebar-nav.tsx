@@ -1,5 +1,6 @@
 import { JSX, ParentProps } from "solid-js";
 import { Icon } from "@iconify-icon/solid";
+import { useNavigate } from "@solidjs/router";
 
 interface SidebarNavProps extends ParentProps {
   title: string;
@@ -10,15 +11,22 @@ interface SidebarNavProps extends ParentProps {
   isOpened: () => boolean;
 }
 
-export default function SidebarNav({ title, id, icon, children, isOpenSetter,isOpened }: SidebarNavProps) {
+export default function SidebarNav({ title, id, icon, children, isOpenSetter,isOpened, href }: SidebarNavProps) {
+
+  const navigate = useNavigate()
 
 
   const handleToogle = () => {
     if (isOpened()) {
-      isOpenSetter(0)
+      
+      isOpenSetter(0)  
+      
       return
     }
-
+    
+    if (href){
+      navigate(href)
+    }
 
     isOpenSetter(id)
   }

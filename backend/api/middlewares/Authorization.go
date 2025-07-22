@@ -42,11 +42,18 @@ func AuthenticationCheck(c *fiber.Ctx) error {
 
 		if refresh_token == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"messege": "Unauthorized, You have no access rights!",
+				"messege": "No token was given!",
+			})
+		}
+
+		if utils.CheckRefreshToken(refresh_token) != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"messege": "Invalid Token",
 			})
 		}
 
 		c.Location("/auth/refresh")
+		return c.Next()
 
 	}
 

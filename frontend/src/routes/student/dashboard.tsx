@@ -10,7 +10,8 @@ import {
 } from "solid-js";
 import Card from "~/components/atoms/cards/card";
 import CardWithStatus from "~/components/atoms/cards/cardWithStatus";
-import RootLayout from "~/components/layouts/RootLayout";
+import DashboardLayout from "~/components/layouts/DashboardLayout";
+import RootLayout from "~/components/layouts/DashboardLayout";
 import { DefaultStudent } from "~/constants/student-constant";
 import { GetStudentData } from "~/services/api/students/get-student-profile";
 import { StudentType } from "~/types/master-types/profile-type";
@@ -36,7 +37,7 @@ export default function Home() {
   });
 
   return (
-    <>
+    <DashboardLayout>
       <MetaProvider>
         <Title>Zenith - Dashboard</Title>
       </MetaProvider>
@@ -86,6 +87,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-    </>
+    </DashboardLayout>
   );
 }

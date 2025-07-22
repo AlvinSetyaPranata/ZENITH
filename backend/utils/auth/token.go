@@ -86,6 +86,12 @@ func ParseToken(tokenStr string, isAccessToken bool) (string, string, error) {
 	return userID, role, nil
 }
 
+func CheckRefreshToken(refreshToken string) error {
+	_, _, isValid := ParseToken(refreshToken, false)
+
+	return isValid
+}
+
 func InvalidateToken(tokenStr string) string {
 	return ""
 }

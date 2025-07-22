@@ -43,7 +43,7 @@ export default function SonnerGroup(props: SoonerGroupPropsType) {
     );
   };
 
-  createEffect(() => console.log(props.soonersData()), [props.soonersData]);
+  // createEffect(() => console.log(props.soonersData()), [props.soonersData]);
 
   return (
     <div class="fixed top-0 left-1/2 -translate-x-1/2 overflow-visible flex flex-col gap-y-8 pt-8 h-max">
