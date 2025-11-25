@@ -11,9 +11,6 @@ const DEFAULT_PORT = "8000"
 
 func main() {
 	config.LogInit(false)
-	app := config.CreateFiber(config.Log)
-	db := config.NewDatabase(config.Log)
-
 	defer config.Log.Sync()
 
 	config.Log.Debug("Loading .env")
@@ -23,6 +20,9 @@ func main() {
 		config.Log.Fatal("Failed to load .env")
 		return
 	}
+
+	app := config.CreateFiber(config.Log)
+	db := config.NewDatabase(config.Log)
 
 	config.Log.Debug("Boostrapping routers")
 	configuration_status := config.Boostrap(&config.BoostrapConfig{

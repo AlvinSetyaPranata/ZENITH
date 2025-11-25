@@ -3,13 +3,17 @@ package config
 import (
 	"time"
 
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func NewDatabase(log *zap.SugaredLogger) *gorm.DB {
-	dsn := "host=localhost user=alvin password=@Alvin123 dbname=zenith port=5432"
+
+	dsn := viper.GetString("DB_DSN")
+
+	log.Debugf("DSN: %s", dsn)
 
 	log.Debug("Opening connection to database")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
